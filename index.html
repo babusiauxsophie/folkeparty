@@ -105,6 +105,11 @@
   }
   @keyframes rainbow { to { filter: hue-rotate(360deg); } }
 
+  .mute {
+    position: fixed; top: 14px; right: 14px; z-index: 8;
+    padding: 8px 16px; border-radius: 999px; border: 2px solid #fff;
+    background: rgba(0,0,0,.4); color: #fff; font: inherit; font-size: 16px; cursor: pointer;
+  }
   .hint {
     position: fixed; bottom: 12px; left: 0; right: 0; text-align: center;
     color: #fff; opacity: .7; font-size: 14px; z-index: 6; pointer-events: none;
@@ -169,7 +174,9 @@
     <img class="dancer" src="folkefiguur.png" alt="Folkefiguur dancing">
   </div>
 
-  <div class="hint">click anywhere for more party</div>
+  <div class="hint">click anywhere to start the music</div>
+  <button class="mute">mute</button>
+  <audio id="music" src="party.mp3" preload="auto"></audio>
 
 <script>
   const colors = ["#ff00c8", "#00f0ff", "#ffe600", "#39ff14", "#ff6a00", "#ffffff"];
@@ -202,7 +209,32 @@
   setInterval(confetti, 60);
   setInterval(balloon, 900);
 
+  const LOOP_END = 53;
+  const music = document.getElementById("music");
+  const muteBtn = document.querySelector(".mute");
+  const hint = document.querySelector(".hint");
+
+  function keepLooping() {
+    if (music.currentTime >= LOOP_END) music.currentTime = 0;
+    requestAnimationFrame(keepLooping);
+  }
+  music.addEventListener("ended", () => { music.currentTime = 0; music.play(); });
+  requestAnimationFrame(keepLooping);
+
+  function startMusic() {
+    if (!music.paused) return;
+    music.play().then(() => { hint.textContent = "click anywhere for more party"; }).catch(() => {});
+  }
+
+  muteBtn.addEventListener("click", e => {
+    e.stopPropagation();
+    if (music.paused) return startMusic();
+    music.muted = !music.muted;
+    muteBtn.textContent = music.muted ? "unmute" : "mute";
+  });
+
   document.addEventListener("click", e => {
+    startMusic();
     for (let i = 0; i < 30; i++) {
       const p = document.createElement("div");
       p.className = "pop";
