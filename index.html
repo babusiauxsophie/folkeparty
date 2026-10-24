@@ -8,12 +8,20 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; }
   body {
-    background: #120018;
+    background: #000;
     font-family: "Comic Sans MS", "Comic Neue", cursive;
     cursor: pointer;
     user-select: none;
-    animation: strobe 4s linear infinite;
   }
+
+  /* slides */
+  .scene {
+    position: fixed; inset: 0; overflow: hidden;
+    transition: transform .8s cubic-bezier(.7, 0, .3, 1);
+  }
+
+  /* ---------- disco party ---------- */
+  .disco { animation: strobe 4s linear infinite; }
   @keyframes strobe {
     0%   { background: #2a0033; }
     25%  { background: #001a33; }
@@ -21,10 +29,8 @@
     75%  { background: #002b1a; }
     100% { background: #2a0033; }
   }
-
-  /* spinning spotlight beams */
   .beams {
-    position: fixed; inset: -50%;
+    position: absolute; inset: -50%;
     background: repeating-conic-gradient(from 0deg,
       rgba(255,0,200,.18) 0deg 10deg, transparent 10deg 30deg,
       rgba(0,255,255,.15) 30deg 40deg, transparent 40deg 60deg,
@@ -33,10 +39,8 @@
     pointer-events: none;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* disco ball */
   .ball {
-    position: fixed; top: -10px; left: 50%;
+    position: absolute; top: -10px; left: 50%;
     width: 110px; height: 110px; margin-left: -55px; border-radius: 50%;
     background:
       repeating-linear-gradient(0deg, transparent 0 9px, rgba(0,0,0,.35) 9px 11px),
@@ -52,9 +56,8 @@
   @keyframes ballspin { to { filter: hue-rotate(360deg); } }
   @keyframes swing { from { transform: rotate(-6deg); } to { transform: rotate(6deg); } }
 
-  /* the star of the show */
   .stage {
-    position: fixed; inset: 0;
+    position: absolute; inset: 0;
     display: flex; align-items: flex-end; justify-content: center;
     pointer-events: none; z-index: 5;
   }
@@ -62,7 +65,6 @@
     height: 82vh; max-width: 90vw; object-fit: contain;
     transform-origin: bottom center;
     animation: dance .5s ease-in-out infinite alternate, glow 1.5s linear infinite;
-    z-index: 3;
   }
   @keyframes dance {
     0%   { transform: rotate(-7deg) translateY(0) scaleY(1); }
@@ -75,9 +77,8 @@
     66%  { filter: drop-shadow(0 0 20px #ff0); }
     100% { filter: drop-shadow(0 0 20px #f0f); }
   }
-  /* backup dancers */
   .backup {
-    position: fixed; bottom: 0; height: 40vh; opacity: .55;
+    position: absolute; bottom: 0; height: 40vh; opacity: .55;
     transform-origin: bottom center;
     animation: dance .5s ease-in-out infinite alternate-reverse;
     filter: hue-rotate(160deg) saturate(2);
@@ -91,9 +92,8 @@
     100% { transform: scaleX(-1) rotate(7deg) translateY(0); }
   }
 
-  /* big wobbly title */
   h1 {
-    position: fixed; top: 120px; width: 100%; text-align: center;
+    position: absolute; top: 120px; width: 100%; text-align: center;
     font-size: clamp(2rem, 8vw, 5.5rem); color: #fff;
     text-shadow: 3px 3px 0 #f0f, -3px -3px 0 #0ff;
     animation: wobble 1s ease-in-out infinite, rainbow 2s linear infinite;
@@ -105,27 +105,14 @@
   }
   @keyframes rainbow { to { filter: hue-rotate(360deg); } }
 
-  .mute {
-    position: fixed; top: 14px; right: 14px; z-index: 8;
-    padding: 8px 16px; border-radius: 999px; border: 2px solid #fff;
-    background: rgba(0,0,0,.4); color: #fff; font: inherit; font-size: 16px; cursor: pointer;
-  }
-  .hint {
-    position: fixed; bottom: 12px; left: 0; right: 0; text-align: center;
-    color: #fff; opacity: .7; font-size: 14px; z-index: 6; pointer-events: none;
-  }
-
-  /* confetti */
   .confetti {
-    position: fixed; top: -20px; width: 10px; height: 16px; z-index: 4;
+    position: absolute; top: -20px; width: 10px; height: 16px; z-index: 4;
     pointer-events: none; animation: fall linear forwards;
   }
-  @keyframes fall {
-    to { transform: translateY(110vh) rotate(720deg); }
-  }
-  /* balloons */
+  @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+
   .balloon {
-    position: fixed; bottom: -160px; z-index: 4;
+    position: absolute; bottom: -160px; z-index: 4;
     width: calc(60px * var(--s)); height: calc(76px * var(--s));
     border-radius: 50% 50% 48% 48% / 55% 55% 45% 45%;
     background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.75) 0 8%, transparent 22%), var(--c);
@@ -150,99 +137,399 @@
     100% { transform: translate(0, -125vh) rotate(-6deg); }
   }
   @keyframes string { from { transform: rotate(-10deg); } to { transform: rotate(10deg); } }
+
   .pop {
-    position: fixed; width: 12px; height: 12px; border-radius: 50%; z-index: 7;
+    position: absolute; width: 12px; height: 12px; border-radius: 50%; z-index: 7;
     pointer-events: none; animation: burst .9s ease-out forwards;
   }
-  @keyframes burst {
-    to { transform: translate(var(--dx), var(--dy)) scale(.2); opacity: 0; }
+  @keyframes burst { to { transform: translate(var(--dx), var(--dy)) scale(.2); opacity: 0; } }
+
+  /* ---------- halloween party ---------- */
+  .halloween {
+    background: radial-gradient(ellipse at 50% 110%, #5a1e00 0%, #2b0a3d 45%, #0b0414 100%);
+  }
+  .moon {
+    position: absolute; top: 6vh; right: 9vw; width: 150px; height: 150px; border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #fffbe0, #f5e199 60%, #d9bd5c);
+    box-shadow: 0 0 60px #ffe9a0, 0 0 160px rgba(255,200,80,.5);
+    animation: moonglow 4s ease-in-out infinite alternate;
+  }
+  .moon::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 60%, rgba(180,150,60,.35) 0 10%, transparent 11%),
+      radial-gradient(circle at 65% 35%, rgba(180,150,60,.3) 0 8%, transparent 9%),
+      radial-gradient(circle at 60% 72%, rgba(180,150,60,.25) 0 6%, transparent 7%);
+  }
+  @keyframes moonglow { to { box-shadow: 0 0 90px #ffe9a0, 0 0 220px rgba(255,170,60,.6); } }
+  .spooky-beams {
+    position: absolute; inset: -50%;
+    background: repeating-conic-gradient(from 0deg,
+      rgba(255,110,0,.14) 0deg 8deg, transparent 8deg 36deg,
+      rgba(150,0,255,.14) 36deg 44deg, transparent 44deg 72deg,
+      rgba(80,255,80,.08) 72deg 78deg, transparent 78deg 90deg);
+    animation: spin 18s linear infinite reverse;
+    pointer-events: none;
+  }
+  .fog {
+    position: absolute; left: -50%; bottom: 0; width: 200%; height: 35vh; z-index: 6;
+    background:
+      radial-gradient(ellipse at 20% 100%, rgba(220,200,255,.22), transparent 60%),
+      radial-gradient(ellipse at 55% 100%, rgba(220,200,255,.18), transparent 55%),
+      radial-gradient(ellipse at 85% 100%, rgba(220,200,255,.22), transparent 60%);
+    animation: drift 14s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  @keyframes drift { to { transform: translateX(25%); } }
+  .halloween h1 {
+    color: #ff8a1c;
+    text-shadow: 3px 3px 0 #7a00ff, -3px -3px 0 #2bff6a;
+    animation: wobble 1.4s ease-in-out infinite;
+  }
+  .couple {
+    height: 78vh; max-width: 94vw; object-fit: contain;
+    transform-origin: bottom center;
+    animation: sway .6s ease-in-out infinite alternate, spookyglow 2s linear infinite;
+  }
+  .halloween.hype .couple { animation-duration: .25s, 1s; }
+  .halloween.hype .spooky-beams { animation-duration: 5s; }
+  .halloween.hype h1 { animation-duration: .5s; }
+  .halloween.hype .spider { animation-duration: 1.2s; }
+  .halloween.hype .fog { animation-duration: 5s; }
+  .halloween.hype .moon { animation-duration: 1s; }
+  .halloween.hype .wing { animation-duration: .08s; }
+  @keyframes sway {
+    0%   { transform: rotate(-4deg) translateY(0); }
+    50%  { transform: rotate(0deg) translateY(-24px); }
+    100% { transform: rotate(4deg) translateY(0); }
+  }
+  @keyframes spookyglow {
+    0%   { filter: drop-shadow(0 0 22px #ff7a00); }
+    50%  { filter: drop-shadow(0 0 22px #9a2bff); }
+    100% { filter: drop-shadow(0 0 22px #ff7a00); }
   }
 
+  .spider {
+    position: absolute; top: 0; z-index: 4; pointer-events: none;
+    animation: dangle 3.5s ease-in-out infinite alternate;
+  }
+  .spider::before {
+    content: ""; position: absolute; left: 50%; bottom: 100%; width: 1px; height: 100vh; background: rgba(255,255,255,.5);
+  }
+  @keyframes dangle {
+    from { transform: translateY(var(--from)); }
+    to   { transform: translateY(var(--to)); }
+  }
+
+  .bat {
+    position: absolute; z-index: 4; pointer-events: none;
+    animation: fly var(--t) linear forwards;
+  }
+  .bat svg { display: block; filter: drop-shadow(0 0 6px rgba(255,120,0,.6)); }
+  .wing { transform-box: view-box; transform-origin: 50px 24px; animation: flap .16s ease-in-out infinite alternate; }
+  @keyframes flap { to { transform: scaleY(.25); } }
+  @keyframes fly {
+    0%   { transform: translate(0, 0); }
+    25%  { transform: translate(calc(var(--dir) * 30vw), -6vh); }
+    50%  { transform: translate(calc(var(--dir) * 60vw), 4vh); }
+    75%  { transform: translate(calc(var(--dir) * 90vw), -8vh); }
+    100% { transform: translate(calc(var(--dir) * 125vw), 0); }
+  }
+  .bat.scatter { animation: scatter 1.6s ease-in forwards; }
+  @keyframes scatter {
+    0%   { transform: translate(0, 0) scale(.3); }
+    100% { transform: translate(var(--dx), var(--dy)) scale(1.1); opacity: 0; }
+  }
+
+  .pumpkin {
+    position: absolute; bottom: -120px; z-index: 4; pointer-events: none;
+    width: calc(70px * var(--s));
+    filter: drop-shadow(0 0 14px rgba(255,140,0,.8));
+    animation: rise var(--t) linear forwards;
+  }
+
+  /* ---------- controls ---------- */
+  .mute {
+    position: fixed; top: 14px; right: 14px; z-index: 20;
+    padding: 8px 16px; border-radius: 999px; border: 2px solid #fff;
+    background: rgba(0,0,0,.4); color: #fff; font: inherit; font-size: 16px; cursor: pointer;
+  }
+  .nav {
+    position: fixed; top: 50%; z-index: 20; transform: translateY(-50%);
+    width: 56px; height: 56px; border-radius: 50%; border: 2px solid #fff;
+    background: rgba(0,0,0,.4); color: #fff; font: inherit; font-size: 34px; line-height: 1;
+    cursor: pointer; transition: background .2s, transform .2s;
+  }
+  .nav:hover { background: rgba(255,255,255,.25); transform: translateY(-50%) scale(1.1); }
+  .nav.prev { left: 14px; }
+  .nav.next { right: 14px; }
+  .dots {
+    position: fixed; bottom: 40px; left: 0; right: 0; z-index: 20;
+    display: flex; justify-content: center; gap: 10px; pointer-events: none;
+  }
+  .dots span { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.35); transition: background .3s, transform .3s; }
+  .dots span.on { background: #fff; transform: scale(1.3); }
+  .hint {
+    position: fixed; bottom: 12px; left: 0; right: 0; text-align: center;
+    color: #fff; opacity: .7; font-size: 14px; z-index: 20; pointer-events: none;
+  }
+
+  @media (max-width: 600px) {
+    .nav { width: 44px; height: 44px; font-size: 26px; }
+    .moon { width: 90px; height: 90px; }
+  }
   @media (prefers-reduced-motion: reduce) {
     *, *::before { animation-duration: 6s !important; }
   }
 </style>
 </head>
 <body>
-  <div class="beams"></div>
-  <div class="ball"></div>
-  <h1>PARTY TIME</h1>
+  <section class="scene halloween" data-music="halloween.aac">
+    <div class="spooky-beams"></div>
+    <div class="moon"></div>
+    <h1>SPOOKY PARTY</h1>
+    <div class="stage">
+      <img class="couple" src="sophie-folke.png" alt="Sophie and Folke dancing with their cats">
+    </div>
+    <div class="fog"></div>
+  </section>
 
-  <img class="backup left" src="folkefiguur.png" alt="">
-  <img class="backup right" src="folkefiguur.png" alt="">
-  <div class="stage">
-    <img class="dancer" src="folkefiguur.png" alt="Folkefiguur dancing">
-  </div>
+  <section class="scene disco" data-music="party.mp3">
+    <div class="beams"></div>
+    <div class="ball"></div>
+    <h1>PARTY TIME</h1>
+    <img class="backup left" src="folkefiguur.png" alt="">
+    <img class="backup right" src="folkefiguur.png" alt="">
+    <div class="stage">
+      <img class="dancer" src="folkefiguur.png" alt="Folkefiguur dancing">
+    </div>
+  </section>
 
+  <button class="nav prev" aria-label="Previous party">‹</button>
+  <button class="nav next" aria-label="Next party">›</button>
+  <div class="dots"></div>
   <div class="hint">click anywhere to start the music</div>
   <button class="mute">mute</button>
-  <audio id="music" src="party.mp3" preload="auto" loop></audio>
+  <audio id="music" preload="auto" loop></audio>
 
 <script>
-  const colors = ["#ff00c8", "#00f0ff", "#ffe600", "#39ff14", "#ff6a00", "#ffffff"];
   const pick = a => a[Math.floor(Math.random() * a.length)];
-
-  function confetti() {
-    const c = document.createElement("div");
-    c.className = "confetti";
-    c.style.left = Math.random() * 100 + "vw";
-    c.style.background = pick(colors);
-    c.style.animationDuration = 2.5 + Math.random() * 3 + "s";
-    if (Math.random() < .3) c.style.borderRadius = "50%";
-    document.body.appendChild(c);
-    c.addEventListener("animationend", () => c.remove());
-  }
-
-  const balloonColors = ["#ff2d6f", "#ffd60a", "#3a86ff", "#8338ec", "#06d6a0", "#ff7b00", "#ff4ecd"];
-
-  function balloon(x) {
-    const b = document.createElement("div");
-    b.className = "balloon";
-    b.style.left = (x ?? Math.random() * 92) + "vw";
-    b.style.setProperty("--c", pick(balloonColors));
-    b.style.setProperty("--s", .7 + Math.random() * .6);
-    b.style.setProperty("--t", 7 + Math.random() * 5 + "s");
-    document.body.appendChild(b);
-    b.addEventListener("animationend", e => { if (e.animationName === "rise") b.remove(); });
-  }
-
-  setInterval(confetti, 60);
-  setInterval(balloon, 900);
-
+  const rand = (min, max) => min + Math.random() * (max - min);
+  const scenes = [...document.querySelectorAll(".scene")];
+  const dots = document.querySelector(".dots");
   const music = document.getElementById("music");
   const muteBtn = document.querySelector(".mute");
   const hint = document.querySelector(".hint");
+  let current = 0;
+  let started = false;
 
+  const PALETTES = {
+    disco: ["#ff00c8", "#00f0ff", "#ffe600", "#39ff14", "#ff6a00", "#ffffff"],
+    halloween: ["#ff7a00", "#9a2bff", "#39ff14", "#ffb000", "#1a1a1a"],
+  };
+  const sceneName = () => scenes[current].classList.contains("halloween") ? "halloween" : "disco";
+  const here = el => { scenes[current].appendChild(el); return el; };
+  const removeWhenDone = (el, name) => el.addEventListener("animationend", e => {
+    if (!name || e.animationName === name) el.remove();
+  });
+
+  /* shared */
+  function confetti() {
+    const c = here(document.createElement("div"));
+    c.className = "confetti";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.background = pick(PALETTES[sceneName()]);
+    c.style.animationDuration = rand(2.5, 5.5) + "s";
+    if (Math.random() < .3) c.style.borderRadius = "50%";
+    removeWhenDone(c, "fall");
+  }
+
+  /* disco */
+  const balloonColors = ["#ff2d6f", "#ffd60a", "#3a86ff", "#8338ec", "#06d6a0", "#ff7b00", "#ff4ecd"];
+  function balloon(x) {
+    const b = here(document.createElement("div"));
+    b.className = "balloon";
+    b.style.left = (x ?? Math.random() * 92) + "vw";
+    b.style.setProperty("--c", pick(balloonColors));
+    b.style.setProperty("--s", rand(.7, 1.3));
+    b.style.setProperty("--t", rand(7, 12) + "s");
+    removeWhenDone(b, "rise");
+  }
+
+  /* halloween */
+  const BAT_SVG = `<svg viewBox="0 0 100 50" width="100%">
+    <path class="wing" fill="#140a1f" d="M48 22C38 6 18 4 0 14c9 3 11 11 7 18 10-6 18-2 22 4 4-8 12-8 19-6z"/>
+    <path class="wing" fill="#140a1f" d="M52 22c10-16 30-18 48-8-9 3-11 11-7 18-10-6-18-2-22 4-4-8-12-8-19-6z"/>
+    <ellipse cx="50" cy="27" rx="7" ry="10" fill="#140a1f"/>
+    <path fill="#140a1f" d="M44 20l1-9 4 6h2l4-6 1 9z"/>
+    <circle cx="47.5" cy="23" r="1.6" fill="#ff8a1c"/><circle cx="52.5" cy="23" r="1.6" fill="#ff8a1c"/>
+  </svg>`;
+  const PUMPKIN_SVG = `<svg viewBox="0 0 100 90" width="100%">
+    <path d="M50 20C49 10 54 5 61 2" stroke="#3d6b1f" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <ellipse cx="30" cy="54" rx="24" ry="31" fill="#d9570a"/>
+    <ellipse cx="70" cy="54" rx="24" ry="31" fill="#d9570a"/>
+    <ellipse cx="50" cy="54" rx="24" ry="33" fill="#ff7a1a"/>
+    <path fill="#ffd23f" d="M32 47l8-12 8 12zM52 47l8-12 8 12zM46 55l4-6 4 6z"/>
+    <path fill="#ffd23f" d="M27 62q23 22 46 0l-6 2-4 6-6-5-7 7-6-7-6 5-4-6z"/>
+  </svg>`;
+  const SPIDER_SVG = `<svg viewBox="0 0 60 50" width="100%">
+    <g stroke="#140a1f" stroke-width="2.5" fill="none" stroke-linecap="round">
+      <path d="M24 22L10 12 4 20M24 26L8 24 2 32M26 30L12 36 8 46M36 22l14-10 6 8M36 26l16-2 6 8M34 30l14 6 4 10"/>
+    </g>
+    <ellipse cx="30" cy="27" rx="9" ry="10" fill="#140a1f"/>
+    <circle cx="30" cy="15" r="6" fill="#140a1f"/>
+    <circle cx="27.5" cy="14" r="1.6" fill="#ff3b3b"/><circle cx="32.5" cy="14" r="1.6" fill="#ff3b3b"/>
+  </svg>`;
+
+  function bat() {
+    const b = here(document.createElement("div"));
+    const size = rand(50, 110);
+    const fromLeft = Math.random() < .5;
+    b.className = "bat";
+    b.innerHTML = BAT_SVG;
+    b.style.width = size + "px";
+    b.style.top = rand(4, 55) + "vh";
+    b.style.left = fromLeft ? -size + "px" : "100vw";
+    b.style.setProperty("--dir", fromLeft ? 1 : -1);
+    b.style.setProperty("--t", (hype ? rand(2, 3.5) : rand(4, 8)) + "s");
+    removeWhenDone(b, "fly");
+  }
+  function batBurst(x, y) {
+    for (let i = 0; i < 5; i++) {
+      const b = here(document.createElement("div"));
+      const size = rand(40, 80);
+      const angle = rand(0, Math.PI * 2);
+      const dist = rand(200, 450);
+      b.className = "bat scatter";
+      b.innerHTML = BAT_SVG;
+      b.style.width = size + "px";
+      b.style.left = x - size / 2 + "px";
+      b.style.top = y - size / 4 + "px";
+      b.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+      b.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+      removeWhenDone(b, "scatter");
+    }
+  }
+  function pumpkin() {
+    const p = here(document.createElement("div"));
+    p.className = "pumpkin";
+    p.innerHTML = PUMPKIN_SVG;
+    p.style.left = rand(0, 92) + "vw";
+    p.style.setProperty("--s", rand(.6, 1.2));
+    p.style.setProperty("--t", (hype ? rand(4, 6) : rand(8, 13)) + "s");
+    removeWhenDone(p, "rise");
+  }
+  function hangSpiders() {
+    const scene = document.querySelector(".halloween");
+    [[12, "18vh", "34vh", 50], [78, "40vh", "58vh", 38]].forEach(([left, from, to, size], i) => {
+      const s = document.createElement("div");
+      s.className = "spider";
+      s.innerHTML = SPIDER_SVG;
+      s.style.left = left + "vw";
+      s.style.width = size + "px";
+      s.style.setProperty("--from", from);
+      s.style.setProperty("--to", to);
+      s.style.animationDelay = -i * 1.7 + "s";
+      scene.appendChild(s);
+    });
+  }
+  hangSpiders();
+
+  /* switching slides */
+  scenes.forEach(() => dots.appendChild(document.createElement("span")));
+  function show(i) {
+    current = (i + scenes.length) % scenes.length;
+    scenes.forEach((s, k) => {
+      s.style.transform = `translateX(${(k - current) * 100}%)`;
+      s.setAttribute("aria-hidden", k !== current);
+    });
+    [...dots.children].forEach((d, k) => d.classList.toggle("on", k === current));
+    playSceneMusic();
+  }
+
+  /* music: each slide has its own track, falling back to party.mp3 */
+  function playSceneMusic() {
+    const want = scenes[current].dataset.music;
+    if (!music.src.endsWith(want)) {
+      music.dataset.want = want;
+      music.src = want;
+    }
+    if (started) music.play().catch(() => {});
+  }
+  music.addEventListener("error", () => {
+    if (!music.src.endsWith("party.mp3")) {
+      music.src = "party.mp3";
+      if (started) music.play().catch(() => {});
+    }
+  });
+  /* the halloween couple dances faster during the drop, calming down just before the loop */
+  const HYPE_START = 28;
+  const HYPE_STOP_BEFORE_END = 1.5;
+  const halloweenScene = document.querySelector(".halloween");
+  let hype = false;
+  music.addEventListener("timeupdate", () => {
+    const t = music.currentTime;
+    hype = music.src.endsWith("halloween.aac") && t >= HYPE_START && t < music.duration - HYPE_STOP_BEFORE_END;
+    halloweenScene.classList.toggle("hype", hype);
+  });
 
   function startMusic() {
-    if (!music.paused) return;
-    music.play().then(() => { hint.textContent = "click anywhere for more party"; }).catch(() => {});
+    if (started) return;
+    started = true;
+    music.play().then(() => { hint.textContent = "click anywhere for more party, arrows to switch"; }).catch(() => { started = false; });
   }
 
   muteBtn.addEventListener("click", e => {
     e.stopPropagation();
-    if (music.paused) return startMusic();
+    if (!started) return startMusic();
     music.muted = !music.muted;
     muteBtn.textContent = music.muted ? "unmute" : "mute";
   });
+  document.querySelector(".prev").addEventListener("click", e => { e.stopPropagation(); startMusic(); show(current - 1); });
+  document.querySelector(".next").addEventListener("click", e => { e.stopPropagation(); startMusic(); show(current + 1); });
+  document.addEventListener("keydown", e => {
+    if (e.key === "ArrowLeft") { startMusic(); show(current - 1); }
+    if (e.key === "ArrowRight") { startMusic(); show(current + 1); }
+  });
+  let touchX = null;
+  document.addEventListener("touchstart", e => { touchX = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener("touchend", e => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    touchX = null;
+    if (Math.abs(dx) > 60) { startMusic(); show(current + (dx < 0 ? 1 : -1)); }
+  });
 
+  /* clicking */
   document.addEventListener("click", e => {
     startMusic();
+    const palette = PALETTES[sceneName()];
     for (let i = 0; i < 30; i++) {
-      const p = document.createElement("div");
+      const p = here(document.createElement("div"));
       p.className = "pop";
       p.style.left = e.clientX + "px";
       p.style.top = e.clientY + "px";
-      p.style.background = pick(colors);
+      p.style.background = pick(palette);
       const angle = Math.random() * Math.PI * 2;
-      const dist = 80 + Math.random() * 160;
+      const dist = rand(80, 240);
       p.style.setProperty("--dx", Math.cos(angle) * dist + "px");
       p.style.setProperty("--dy", Math.sin(angle) * dist + "px");
-      document.body.appendChild(p);
-      p.addEventListener("animationend", () => p.remove());
+      removeWhenDone(p, "burst");
     }
-    for (let i = 0; i < 3; i++) balloon(e.clientX / innerWidth * 100 - 4 + (i - 1) * 4);
+    if (sceneName() === "disco") {
+      for (let i = 0; i < 3; i++) balloon(e.clientX / innerWidth * 100 - 4 + (i - 1) * 4);
+    } else {
+      batBurst(e.clientX, e.clientY);
+    }
   });
+
+  /* party loop */
+  setInterval(() => { if (sceneName() === "disco" || hype || Math.random() < .4) confetti(); }, 60);
+  setInterval(() => { if (sceneName() === "disco") balloon(); }, 900);
+  setInterval(() => { if (sceneName() === "halloween" && (hype || Math.random() < .33)) bat(); }, 430);
+  setInterval(() => { if (sceneName() === "halloween" && (hype || Math.random() < .4)) pumpkin(); }, 680);
+
+  show(0);
 </script>
 </body>
 </html>
