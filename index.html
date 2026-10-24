@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Folkefiguur Party</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background: #120018;
+    font-family: "Comic Sans MS", "Comic Neue", cursive;
+    cursor: pointer;
+    user-select: none;
+    animation: strobe 4s linear infinite;
+  }
+  @keyframes strobe {
+    0%   { background: #2a0033; }
+    25%  { background: #001a33; }
+    50%  { background: #33001a; }
+    75%  { background: #002b1a; }
+    100% { background: #2a0033; }
+  }
+
+  /* spinning spotlight beams */
+  .beams {
+    position: fixed; inset: -50%;
+    background: repeating-conic-gradient(from 0deg,
+      rgba(255,0,200,.18) 0deg 10deg, transparent 10deg 30deg,
+      rgba(0,255,255,.15) 30deg 40deg, transparent 40deg 60deg,
+      rgba(255,255,0,.15) 60deg 70deg, transparent 70deg 90deg);
+    animation: spin 12s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* disco ball */
+  .ball {
+    position: fixed; top: -10px; left: 50%;
+    width: 110px; height: 110px; margin-left: -55px; border-radius: 50%;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 9px, rgba(0,0,0,.35) 9px 11px),
+      repeating-linear-gradient(90deg, transparent 0 9px, rgba(0,0,0,.35) 9px 11px),
+      radial-gradient(circle at 35% 35%, #fff, #bbb 40%, #555 80%);
+    box-shadow: 0 0 40px #fff, 0 0 90px #f0f;
+    animation: ballspin 3s linear infinite, swing 2s ease-in-out infinite alternate;
+    z-index: 5;
+  }
+  .ball::before {
+    content: ""; position: absolute; left: 50%; top: -100vh; width: 2px; height: 100vh; background: #999;
+  }
+  @keyframes ballspin { to { filter: hue-rotate(360deg); } }
+  @keyframes swing { from { transform: rotate(-6deg); } to { transform: rotate(6deg); } }
+
+  /* the star of the show */
+  .stage {
+    position: fixed; inset: 0;
+    display: flex; align-items: flex-end; justify-content: center;
+    pointer-events: none; z-index: 5;
+  }
+  .dancer {
+    height: 82vh; max-width: 90vw; object-fit: contain;
+    transform-origin: bottom center;
+    animation: dance .5s ease-in-out infinite alternate, glow 1.5s linear infinite;
+    z-index: 3;
+  }
+  @keyframes dance {
+    0%   { transform: rotate(-7deg) translateY(0) scaleY(1); }
+    50%  { transform: rotate(0deg) translateY(-30px) scaleY(1.03); }
+    100% { transform: rotate(7deg) translateY(0) scaleY(.97); }
+  }
+  @keyframes glow {
+    0%   { filter: drop-shadow(0 0 20px #f0f); }
+    33%  { filter: drop-shadow(0 0 20px #0ff); }
+    66%  { filter: drop-shadow(0 0 20px #ff0); }
+    100% { filter: drop-shadow(0 0 20px #f0f); }
+  }
+  /* backup dancers */
+  .backup {
+    position: fixed; bottom: 0; height: 40vh; opacity: .55;
+    transform-origin: bottom center;
+    animation: dance .5s ease-in-out infinite alternate-reverse;
+    filter: hue-rotate(160deg) saturate(2);
+    pointer-events: none; z-index: 2;
+  }
+  .backup.left  { left: 4vw; }
+  .backup.right { right: 4vw; filter: hue-rotate(260deg) saturate(2); transform: scaleX(-1); animation-name: dance-flip; }
+  @keyframes dance-flip {
+    0%   { transform: scaleX(-1) rotate(-7deg) translateY(0); }
+    50%  { transform: scaleX(-1) rotate(0deg) translateY(-20px); }
+    100% { transform: scaleX(-1) rotate(7deg) translateY(0); }
+  }
+
+  /* big wobbly title */
+  h1 {
+    position: fixed; top: 120px; width: 100%; text-align: center;
+    font-size: clamp(2rem, 8vw, 5.5rem); color: #fff;
+    text-shadow: 3px 3px 0 #f0f, -3px -3px 0 #0ff;
+    animation: wobble 1s ease-in-out infinite, rainbow 2s linear infinite;
+    pointer-events: none; z-index: 1;
+  }
+  @keyframes wobble {
+    0%, 100% { transform: rotate(-3deg) scale(1); }
+    50%      { transform: rotate(3deg) scale(1.1); }
+  }
+  @keyframes rainbow { to { filter: hue-rotate(360deg); } }
+
+  .hint {
+    position: fixed; bottom: 12px; left: 0; right: 0; text-align: center;
+    color: #fff; opacity: .7; font-size: 14px; z-index: 6; pointer-events: none;
+  }
+
+  /* confetti */
+  .confetti {
+    position: fixed; top: -20px; width: 10px; height: 16px; z-index: 4;
+    pointer-events: none; animation: fall linear forwards;
+  }
+  @keyframes fall {
+    to { transform: translateY(110vh) rotate(720deg); }
+  }
+  /* balloons */
+  .balloon {
+    position: fixed; bottom: -160px; z-index: 4;
+    width: calc(60px * var(--s)); height: calc(76px * var(--s));
+    border-radius: 50% 50% 48% 48% / 55% 55% 45% 45%;
+    background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.75) 0 8%, transparent 22%), var(--c);
+    box-shadow: inset -8px -10px 18px rgba(0,0,0,.25);
+    pointer-events: none; animation: rise var(--t) linear forwards;
+  }
+  .balloon::before {
+    content: ""; position: absolute; left: 50%; bottom: -7px; margin-left: -6px;
+    border: 6px solid transparent; border-bottom: 8px solid var(--c); border-top: 0;
+    transform: rotate(180deg);
+  }
+  .balloon::after {
+    content: ""; position: absolute; left: 50%; top: 100%; margin-top: 6px;
+    width: 2px; height: calc(80px * var(--s));
+    background: rgba(255,255,255,.6); transform-origin: top; animation: string 1s ease-in-out infinite alternate;
+  }
+  @keyframes rise {
+    0%   { transform: translate(0, 0) rotate(-6deg); }
+    25%  { transform: translate(25px, -30vh) rotate(6deg); }
+    50%  { transform: translate(-20px, -60vh) rotate(-6deg); }
+    75%  { transform: translate(20px, -90vh) rotate(6deg); }
+    100% { transform: translate(0, -125vh) rotate(-6deg); }
+  }
+  @keyframes string { from { transform: rotate(-10deg); } to { transform: rotate(10deg); } }
+  .pop {
+    position: fixed; width: 12px; height: 12px; border-radius: 50%; z-index: 7;
+    pointer-events: none; animation: burst .9s ease-out forwards;
+  }
+  @keyframes burst {
+    to { transform: translate(var(--dx), var(--dy)) scale(.2); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before { animation-duration: 6s !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="beams"></div>
+  <div class="ball"></div>
+  <h1>PARTY TIME</h1>
+
+  <img class="backup left" src="folkefiguur.png" alt="">
+  <img class="backup right" src="folkefiguur.png" alt="">
+  <div class="stage">
+    <img class="dancer" src="folkefiguur.png" alt="Folkefiguur dancing">
+  </div>
+
+  <div class="hint">click anywhere for more party</div>
+
+<script>
+  const colors = ["#ff00c8", "#00f0ff", "#ffe600", "#39ff14", "#ff6a00", "#ffffff"];
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+
+  function confetti() {
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.background = pick(colors);
+    c.style.animationDuration = 2.5 + Math.random() * 3 + "s";
+    if (Math.random() < .3) c.style.borderRadius = "50%";
+    document.body.appendChild(c);
+    c.addEventListener("animationend", () => c.remove());
+  }
+
+  const balloonColors = ["#ff2d6f", "#ffd60a", "#3a86ff", "#8338ec", "#06d6a0", "#ff7b00", "#ff4ecd"];
+
+  function balloon(x) {
+    const b = document.createElement("div");
+    b.className = "balloon";
+    b.style.left = (x ?? Math.random() * 92) + "vw";
+    b.style.setProperty("--c", pick(balloonColors));
+    b.style.setProperty("--s", .7 + Math.random() * .6);
+    b.style.setProperty("--t", 7 + Math.random() * 5 + "s");
+    document.body.appendChild(b);
+    b.addEventListener("animationend", e => { if (e.animationName === "rise") b.remove(); });
+  }
+
+  setInterval(confetti, 60);
+  setInterval(balloon, 900);
+
+  document.addEventListener("click", e => {
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement("div");
+      p.className = "pop";
+      p.style.left = e.clientX + "px";
+      p.style.top = e.clientY + "px";
+      p.style.background = pick(colors);
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 80 + Math.random() * 160;
+      p.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+      p.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+      document.body.appendChild(p);
+      p.addEventListener("animationend", () => p.remove());
+    }
+    for (let i = 0; i < 3; i++) balloon(e.clientX / innerWidth * 100 - 4 + (i - 1) * 4);
+  });
+</script>
+</body>
+</html>
