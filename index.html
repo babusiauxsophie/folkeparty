@@ -176,7 +176,7 @@
 
   <div class="hint">click anywhere to start the music</div>
   <button class="mute">mute</button>
-  <audio id="music" src="party.mp3" preload="auto"></audio>
+  <audio id="music" src="party.mp3" preload="auto" loop></audio>
 
 <script>
   const colors = ["#ff00c8", "#00f0ff", "#ffe600", "#39ff14", "#ff6a00", "#ffffff"];
@@ -209,17 +209,10 @@
   setInterval(confetti, 60);
   setInterval(balloon, 900);
 
-  const LOOP_END = 53;
   const music = document.getElementById("music");
   const muteBtn = document.querySelector(".mute");
   const hint = document.querySelector(".hint");
 
-  function keepLooping() {
-    if (music.currentTime >= LOOP_END) music.currentTime = 0;
-    requestAnimationFrame(keepLooping);
-  }
-  music.addEventListener("ended", () => { music.currentTime = 0; music.play(); });
-  requestAnimationFrame(keepLooping);
 
   function startMusic() {
     if (!music.paused) return;
