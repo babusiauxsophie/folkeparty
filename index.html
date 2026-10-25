@@ -679,17 +679,46 @@
   }
 
   /* music: each slide has its own track, falling back to party.mp3 */
+  /* even out the songs: gain per file so each plays at about the same loudness (measured loudness 0.42, 0.075, 0.083) */
+  const TARGET = 0.16;
+  const LEVELS = { "birthday.aac": TARGET / 0.4232, "halloween.aac": TARGET / 0.0748, "party.mp3": TARGET / 0.0831 };
+  let audioCtx = null, gainNode = null;
+  function applyLevel() {
+    const g = LEVELS[music.src.split("/").pop()] ?? 1;
+    if (gainNode) { gainNode.gain.value = g; music.volume = 1; }
+    else music.volume = Math.min(1, g / Math.max(...Object.values(LEVELS)));
+  }
+  /* boosting above full volume needs Web Audio, which browsers only allow on a real site and after a tap or key press */
+  function hookAudio() {
+    if (audioCtx || location.protocol === "file:") return;
+    try {
+      audioCtx = new AudioContext();
+      const src = audioCtx.createMediaElementSource(music);
+      gainNode = audioCtx.createGain();
+      const limiter = audioCtx.createDynamicsCompressor();
+      limiter.threshold.value = -3; limiter.knee.value = 0; limiter.ratio.value = 20;
+      limiter.attack.value = 0.003; limiter.release.value = 0.1;
+      src.connect(gainNode).connect(limiter).connect(audioCtx.destination);
+      audioCtx.resume();
+      applyLevel();
+    } catch (e) { audioCtx = null; gainNode = null; }
+  }
+  document.addEventListener("pointerdown", hookAudio, true);
+  document.addEventListener("keydown", hookAudio, true);
+
   function playSceneMusic() {
     const want = scenes[current].dataset.music;
     if (!music.src.endsWith(want)) {
       music.dataset.want = want;
       music.src = want;
     }
+    applyLevel();
     if (started && !paused) music.play().catch(() => {});
   }
   music.addEventListener("error", () => {
     if (!music.src.endsWith("party.mp3")) {
       music.src = "party.mp3";
+      applyLevel();
       if (started && !paused) music.play().catch(() => {});
     }
   });
