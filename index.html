@@ -396,7 +396,7 @@
 </style>
 </head>
 <body>
-  <section class="scene bday" data-music="birthday.aac">
+  <section class="scene bday" data-music="birthday.mp3">
     <div class="spooky-beams"></div>
     <div class="moon"></div>
     <div class="bunting"></div>
@@ -410,7 +410,7 @@
     <div class="fog"></div>
   </section>
 
-  <section class="scene halloween" data-music="halloween.aac">
+  <section class="scene halloween" data-music="halloween.mp3">
     <div class="spooky-beams"></div>
     <div class="moon"></div>
     <h1>SPOOKY PARTY</h1>
@@ -679,62 +679,21 @@
   }
 
   /* music: each slide has its own track, falling back to party.mp3 */
-  /* even out the songs: gain per file so each plays at about the same loudness (measured loudness 0.42, 0.075, 0.083) */
-  const TARGET = 0.16;
-  const LEVELS = { "birthday.aac": TARGET / 0.4232, "halloween.aac": TARGET / 0.0748, "party.mp3": TARGET / 0.0831 };
-  let audioCtx = null, gainNode = null;
-  function applyLevel() {
-    const g = LEVELS[music.src.split("/").pop()] ?? 1;
-    if (gainNode) { gainNode.gain.value = g; music.volume = 1; }
-    else music.volume = Math.min(1, g / Math.max(...Object.values(LEVELS)));
-  }
-  /* boosting above full volume needs Web Audio, which browsers only allow on a real site and after a tap or key press.
-     The music is only routed through it once it is really running, otherwise phones would stay silent. */
-  let hooking = false;
-  async function hookAudio() {
-    if (audioCtx || hooking || location.protocol === "file:") return;
-    hooking = true;
-    try {
-      if (navigator.audioSession) navigator.audioSession.type = "playback";
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      const ctx = new Ctx();
-      await ctx.resume();
-      if (ctx.state !== "running") { ctx.close(); return; }
-      const src = ctx.createMediaElementSource(music);
-      gainNode = ctx.createGain();
-      const limiter = ctx.createDynamicsCompressor();
-      limiter.threshold.value = -3; limiter.knee.value = 0; limiter.ratio.value = 20;
-      limiter.attack.value = 0.003; limiter.release.value = 0.1;
-      src.connect(gainNode);
-      gainNode.connect(limiter);
-      limiter.connect(ctx.destination);
-      audioCtx = ctx;
-      applyLevel();
-    } catch (e) {
-      gainNode = null;
-    } finally {
-      hooking = false;
-    }
-  }
-  ["click", "touchend", "keydown"].forEach(type => document.addEventListener(type, hookAudio, true));
-
   function playSceneMusic() {
     const want = scenes[current].dataset.music;
     if (!music.src.endsWith(want)) {
       music.dataset.want = want;
       music.src = want;
     }
-    applyLevel();
     if (started && !paused) music.play().catch(() => {});
   }
   music.addEventListener("error", () => {
     if (!music.src.endsWith("party.mp3")) {
       music.src = "party.mp3";
-      applyLevel();
       if (started && !paused) music.play().catch(() => {});
     }
   });
-  /* halloween music cues, in seconds into halloween.aac (which runs from 0:49.21 to 2:02.32 of the original, exactly 32 bars) */
+  /* halloween music cues, in seconds into halloween.mp3 (which runs from 0:49.21 to 2:02.32 of the original, exactly 32 bars) */
   /* measured cues run about 0.5 s behind what you hear, so they are read this much ahead */
   const MEASURE_LAG = 0.5;
   const HYPE_SECTIONS = [[18.29, 53.79], [54.89, 71.99]];
@@ -745,7 +704,7 @@
   const clock = new URLSearchParams(location.search).has("clock") ? document.querySelector(".clock") : null;
   if (clock) clock.hidden = false;
   let hype = false;
-  /* deep bass level of halloween.aac every 0.05 s, 0 to z */
+  /* deep bass level of halloween.mp3 every 0.05 s, 0 to z */
   const BASS_STEP = 0.05;
   const BASS = "73256532443722265102353224332101111132324335654cnsoccdcksafrhzhbywzk6kokmdbc8jc7cbqog4hndi95gkm98ej5637jfdf48jl797bfkfa5gi7d6ak7a36cnk836lnf79jji64a4ed47hdld3bjkmc8homa56jade89hab87c8ga5dc4b64hk8e4bh5cf8jh2e6amb7747df5abal4c54lj8a9mm6668f9fb5dec3bdej987bbg568a86c68fg955b8fbebhji44bcge7cai7758cib38iie766bbe758df925ddd83gcgb84gmcd79jhh85bhhe449bd000ad81039e2107ae014lzsqrrnzwvvqrusttgtussvhwssusoxuvumsurruguussvjwussnptqrrguurrugwurruouqrhgtvtsufutqqulzwttrswtuuhwxttxivtrstnvstuluwtuvhywvvwkvuuurotrqshtppqrguqprqntqosjstpqukwurtr7677d9rzvutb557aalwsstrryuvuluustufvvssvlytuupsxuvvittqquiyxuttmtrrrissprsgusqqtkvsqqmvxhqudsrdupexngvjjwhmuevwtttgvtqrultrqrnqussuhyxuvxjxuttsntrsslrvtsvhupqrqjvrrtnqtqpthuuprvpxtppmrzrtth965gldyl87anztsultztuuhzytvvgzwsssoysstiwzuvvgxvrrtlzyuuotxutuezvrstjzvrrqqztstjwyttugyvsssnzvtvmuzuuuhyxtttizussqpytttitvrrtezvsttmzutultzuvuftwssujyrqrmnxqssiuxrrvfywqrsazuuvlnzsvvexztuwczzuwvuzsutiyzuvvjzxsttrzwuumvzuuuhyxuutpzvtsqrwrsrhuvrsrkzysvttzvusmtysstcihcfjbfmfclkzsuthuyslnixwrsqrzssrkwyrrtizwqrtoxtrsmszstriywqsslwvrsrnwrqskvzstuizyrsvmxvqru2121122200001211002300dyzuwugzzsusqzyvxruystrkyvrqqjyuqsq78489dxz9a6hzxtvvpzvuwquztuxhn5696jzxtus679798szuvu956768szxwvqvzvtthzzvyyizysuvwzvssjwysttba44adgzi96cwztvxixxsuwkzvtvtbh6868rziqzczzcuodztqpmfkifelxwsuvjzwuvxoxvstqsxvuuizyxnojzwuvsryxuvnyzvvzgwtsuwlwutxqswutyiwvutvlzwvhqqzwuxmtwruvhwtssvmvsstntxtvuhwurqviwvtstqzvujgvwtuvhywutwmywsuprtsrwgutstwivtsvtpwttri33375432533232";
   const bassBox = document.querySelector(".bass");
@@ -757,7 +716,7 @@
     requestAnimationFrame(followMusic);
     if (paused) return;
     const t = music.currentTime;
-    const onTrack = music.src.endsWith("halloween.aac") && !music.paused;
+    const onTrack = music.src.endsWith("halloween.mp3") && !music.paused;
     const tm = t + MEASURE_LAG;
     hype = onTrack && HYPE_SECTIONS.some(([from, to]) => tm >= from && tm < to);
     halloweenScene.classList.toggle("hype", hype);
@@ -769,7 +728,7 @@
     bassBox.style.transform = `translateY(${-k * 28}px) scale(${(1 + k * 0.03) * zoom}, ${(1 - k * 0.035) * zoom})`;
     halloweenScene.classList.toggle("shout", onTrack && SHOUTS.some(([from, to]) => t >= from && t < to));
     if (clock) {
-      const song = t + (music.src.endsWith("halloween.aac") ? SONG_OFFSET : music.src.endsWith("birthday.aac") ? 2.05 : 0);
+      const song = t + (music.src.endsWith("halloween.mp3") ? SONG_OFFSET : music.src.endsWith("birthday.mp3") ? 2.05 : 0);
       clock.textContent = `${Math.floor(song / 60)}:${(song % 60).toFixed(1).padStart(4, "0")}`;
     }
   }
@@ -826,7 +785,7 @@
   const BREAKDOWN = [barTime(87), barTime(95)];
   let bdayPrevT = 0;
   const crossed = (times, a, b) => times.some(x => a < x && x <= b && b - a < 0.5);
-  /* bass level of birthday.aac every 0.05 s; bars 55-70 ride up and down on it, bars 71-85 push forward on it */
+  /* bass level of birthday.mp3 every 0.05 s; bars 55-70 ride up and down on it, bars 71-85 push forward on it */
   const BDAY_BASS = "ca996a9c896546757333223252121212421121114211101042101100330010102642113355452332342101000410000004210001032001010230000001400000117531124566643333431010003200000033000000240000011410010004100101055411155876633444511000013000000069211200010000000048822299882101goll9dkd888868856869gaa49gc855553c44246537552444376437364665433544b653466a94547c427999e988edd54652fb86a443ga88i344ha86e444bd77c85348a62348a633257535966f575eac4225335443473255346334732397afh53286328a53237c774269825647fba49df633533764224325532233253211232643222326nndgafcbee77ac78ac8a897dc86544557773345856535a636a76d7729af6342249a62334a84316c425a65b657c89423224887654aa75667a66ba7aac7af999a555bdcaba8da897ad78cf8bgaa8af7775666a86953957676dkg97e979656aac435546c997449886667976985e9967d9656552111110212321100100111100000000002zyzzuxzzxzzzzxzzrzzzyxzznzzzzwzzmzzzzuzzpzwzyuxzuzwzxsvzvwwzxtuyxqxzxtsyxmyyytqxxjzxyuqvxmzuzuqvxqztyuqtxtwuzvrsxvrvxwrqwwlwwwhwtulzvwrpvwkztxuquwpysxuqtvtvuyursvvpvxvrqwvmxwwspvvkxlxjyswmywwrouvpyrxtqsvrwsxuqqvusvxuqqvvnwxvrpvvjyvwtouvjzvxtpuvoyswtpsvrxtyttvxtqvwtorvvmwwvsovujyuwrotvjyuwspuvnzrxtptvrvsxuqrvtsuxupqvuowyvrpvvixuvspuvjytwspuvnztwtpsvqzrxttuwsruwtovxtlwgussuvjxvuiyiylujxntkxowsvqmtupwrxtqrvtttxuqruuovxvqpvvjwvvrpuviytwspuvmznzorqtrwuxsotvtusxuqrvuqvwvrpvvlxwwrpuvizvwspuvlyswtptvp4101210122015369e3114300mzyyusxxjzuxurwxmzsyuqvwqzsxuqtwtztxvqsvuwuxvrqvvkvvwtpuvjzuwspvvkzrwtquvozqwtqsvszqwuqrvuzuwupqvupzuvrpuujzuwspuukzswrotumzqxrporqqpwsosvuvqwvrrvumxwvrpuukztvqpuukzrvsotvnzqxtpsuqywwtqrutxvwuqqvumowvsqvulzsvrpuukzswsptumzqwtptvqzrwuqrvstpwurruunzuusotugvvvjrqtkvtuqouumzovtpsvqzqwtpruszvvtpquttxvuppuumyuvqouuhwrvtotulzqwqjlnkzqwrosvszswuqqutrvvuqpuuoytvqpuujzsvsntulzswsosupztvsqrtqvrxtioppmowtoqvuluuvspuuhztvsotulzqvrptuozqvsoruryqwupqutpzvurputmzuviqenfouvrovvlzqvsotvozpwtpsurzswtmvwsmoutoqvu822042005301531043334zqyqzxyupvwtuwyvrtvupvywsrwvmzxwsqvvjzwwtquvkxvxuquvnwvxuqtvrwwxuprutryxvrquuoxwwsquujtvwtpvvjuvwtpuvnyuwuptuquvxvqsusrwwvqqutqzwwfrdsjzwvqpuujvvwtptumuuxuqtvquvxuqsvtqvwvrruuqywwrquujzwvspuuiyvwsotulyuwtqtupwvxvqsusvxxvrrvuqywvrpvvkxvwrpuvf3010000000000003fi7abi68zzzxttxwrzyysrwwozxxsqwwjvwwtpvvlyvxuquvpwvxvqtustwxvhmnonzxvesqrjzxvqpvvkvwwtpuukuvxuqtvpuuxupsvssuxuqrutqywvrruumzwwspuujvvwmqbskzvwsouvosuwtpturuwwvrsvtrxwvqquukxwvrpuujyvwspuukxvwpolmlywwrnorqtwwtosvtotwvqquuluwvrqvuizwvizkylyuvqovvn2010000000000001mukuiugtnyywrrxxlyxxtpwwjzuytpvwmzuxuquwqzryuqtwuutxvqrwvqwwwrpvvkyvwjzvvjzvwrovwmztxtpuwqytytqsvswvwvrrvtquwvrqvvkxuwsqvviytxoswfizswqtvhlyrxupsvtvsxvqsvusvxurqvulwvwrpuuizuwspuvlzsxtpuvpysxtpsvrwsxuqvxtovwtoqwvlwvwrpvvjyuvspuulzrxsptupyvsokfa6zxtplgb6xyvrsyurpznwmwlwkxvwrpvvkytwsptvoytwuqsvswrxtprvuuwxvqpvumxxwrovvjywvspuukztwmytwnwwwrouvrwrwtprvtsrvuqpvuouwurpvvixuwspuvjyuwtouvnzrwrtuimxrwussmnsvxuqqvupwxvrqvuiyvvrpuukztxsouulyuwtptvqwtxupsvsvuwvqqvtpxwukwwugzxupovvjxtvrouvmwqvsqsuqyqytpstssswuqrvuquwvqpuvjxvvmsvgiyuvlymynwxjkmquo2000024200000364100006e337442394577889975000017852100058510000696100006b8310004ba510003j7395541f5688a89898545634751100038730000498300003aa500002bc711000if277551895100006b8200005c9411002e8395432a8410001dc2875517a6210005f35a6724f35a7632g5495541i9397641a84zxzzxzzzzzzzzzzzrzzzzxzzmzzzyuzzmzyzxtzzqzvzxtxzuzuzxtvzwvvzxttywpxyytsxxkyxyurxxjzvyurwxnztyuquwryxtplgb6zzvrmhc7uzwrnid8nzytoje8izwztqwxoztyuquwrztyvrtwtstxvrrvutvwvrrvviwvwsrwvkzuwspwvlztwtptvpzsxtpsvszsxuqrvuvuwvrqvuhwvvtouulwuvrpuvkyswsquwpzrwtpswsvswtrrutuuwuqpuupwvvrpuuoyuwsouujxswtosuowrwsqsurvrwusswuutwuqqwunwvusquulyuvrouumzswsotuozswtpsuquswuqrututwuqquulvvurqvukxuvrpvujzuvtptumyvsojea5xtqmiea6wvrojfb6rwsplgc7kytqmhc8czurnid97zvsnjea6zwsojfa6ywtpkgb6sxuqlhc7lzurmid8dzvrnid97zwsnje95zvsokfa6xxtpkgb7sxtplgc8kzzzvtwylzxzurxxnzuzvrvxrztzvruxuwtzwstwvpwywrqvvkwwwsqvvjzuxtpvwlztyuquwpztyuqtvswsxvqrvuruxvrqvvmwwwsqvviyuxsouvkyswtptvozsxuqsvswtxursvutvxvqqvumwwvrpuvjyuwspuvkztwtptvnysxtpsurwsxuqrvtsuwvqqvunwwvrquvjzvwrpuvjztwsptvnzswtpsvrwvsokfa6vxtqlhc7qyvrmhd8gxvsnid99zvyuqvwoztyuqtwrysxuqsvuutxvrrvvovwwsqvvixvwrouuiytwspuvmzsxtptvqxsxuqsvtvtxvqqvuovwvrpvvkxvwrpuviytwspuulxsxtptupxrxtpsvsvswuqruupvwvrquvlxwwrpuuiytwsptvlzswtptvpzrxtqsvsttxupqutpuwvqpuulwvvrpuuiyuwspuvlztxsptvpysxtpsvswswuqrvurtwurqvu91000000000553019lqvzzxzpztzvruwtyuyvqswusuxwrqvvmxwwsqvvjzvxtquvkzuxtpuvozsxuqtvsxsxuqrvutuxvrrvvnxxwrpvvjyvwspuvkztwspuvnzsxuqtvrytxuqrvtttxvqqvuowwvrpvvjyvwspuvjzuxsptvnzsxtptvqysxuqrvtutxvrruupwxwqpvukyvwrpuujztwspuvmzsxtqtvqzsxupsvtutwuqqvupvwvkxjxiywvqpvvg10000000000000000000000000000000000000000000";
   const BDAY_BASS_UP = [55, 70], BDAY_BASS_FORWARD = [71, 85];
   let bdayBass = 0;
@@ -890,7 +849,7 @@
   function followBday() {
     requestAnimationFrame(followBday);
     if (paused) return;
-    const on = music.src.endsWith("birthday.aac") && !music.paused;
+    const on = music.src.endsWith("birthday.mp3") && !music.paused;
     bdayScene.classList.toggle("synced", on);
     if (!on) {
       duo.style.transform = "";
