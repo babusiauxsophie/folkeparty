@@ -282,6 +282,79 @@
   .credits a:hover { color: #fff; text-decoration: underline; }
   @media (max-width: 600px) { .credits { bottom: 64px; } .credits a { font-size: 13px; } }
 
+  /* ---------- spooky birthday party ---------- */
+  .bday { background: radial-gradient(ellipse at 50% 115%, #1f4d12 0%, #2a0f45 45%, #08030f 100%); }
+  .bday .moon { left: 7vw; right: auto; top: 12vh; width: 110px; height: 110px; }
+  .bday h1 {
+    top: 90px; line-height: 1; color: #9dff3c;
+    text-shadow: 4px 4px 0 #6a00c9, -2px -2px 0 #ff7a00;
+    animation: wobble 1.3s ease-in-out infinite;
+  }
+  .bunting {
+    position: absolute; top: 0; left: -2%; width: 104%; height: 70px; z-index: 6; display: flex;
+    justify-content: space-between; pointer-events: none;
+    background: radial-gradient(ellipse at 50% -60%, transparent 70%, rgba(255,255,255,.5) 70.5%, transparent 71.5%);
+  }
+  .bunting span {
+    width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent;
+    border-top: 34px solid var(--c); margin-top: var(--y); transform-origin: top center;
+    animation: flutter 1.8s ease-in-out infinite alternate; animation-delay: var(--d);
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,.5));
+  }
+  @keyframes flutter { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } }
+  .duo {
+    height: 78vh; max-width: 96vw; object-fit: contain; transform-origin: bottom center;
+    animation: sway .55s ease-in-out infinite alternate, bdayglow 2.4s linear infinite;
+  }
+  .bday.synced .duo { animation: bdayglow 2.4s linear infinite; }
+  @keyframes bdayglow {
+    0%   { filter: drop-shadow(0 0 20px #9dff3c); }
+    50%  { filter: drop-shadow(0 0 20px #b04bff); }
+    100% { filter: drop-shadow(0 0 20px #9dff3c); }
+  }
+  .cake { position: absolute; right: 3vw; bottom: 2vh; width: min(20vw, 190px); z-index: 6; pointer-events: none; }
+  .flame { transform-box: fill-box; transform-origin: bottom center; animation: flick .18s ease-in-out infinite alternate;
+    scale: var(--flare, 1); transition: opacity .25s, scale .12s; }
+  .cake.out .flame { opacity: 0; }
+  .smoke {
+    position: absolute; width: 14px; height: 14px; border-radius: 50%; background: rgba(210,210,230,.7);
+    pointer-events: none; animation: smoke 1.8s ease-out forwards;
+  }
+  @keyframes smoke { to { transform: translate(var(--dx), -90px) scale(3.5); opacity: 0; } }
+  .bday h1 .ch { display: inline-block; }
+  .dim { position: absolute; inset: 0; z-index: 2; background: #000; opacity: 0; pointer-events: none; }
+  .boss {
+    position: absolute; left: 50%; bottom: 8vh; width: min(70vh, 80vw); z-index: 3; pointer-events: none;
+    opacity: 0; filter: drop-shadow(0 0 40px rgba(180,120,255,.8));
+  }
+  .burstghost {
+    position: absolute; left: 50%; top: 52%; z-index: 7; pointer-events: none; width: 60px; margin: -40px 0 0 -30px;
+    animation: ghostout 1.4s cubic-bezier(.2, .7, .4, 1) forwards;
+  }
+  @keyframes ghostout {
+    0%   { transform: translate(0, 0) scale(.2) rotate(0deg); opacity: 0; }
+    15%  { opacity: .95; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(1.3) rotate(var(--spin)); opacity: 0; }
+  }
+  @keyframes flick { from { transform: scale(1, 1) rotate(-4deg); } to { transform: scale(.85, 1.15) rotate(4deg); } }
+  .ghost {
+    position: absolute; bottom: -140px; z-index: 4; pointer-events: none; opacity: .85;
+    width: calc(70px * var(--s)); animation: rise var(--t) linear forwards;
+  }
+  .ghost svg { display: block; animation: ghostwave 1.2s ease-in-out infinite alternate; }
+  @keyframes ghostwave { from { transform: translateX(-12px) rotate(-6deg); } to { transform: translateX(12px) rotate(6deg); } }
+  .balloon .eyes { position: absolute; inset: 0; }
+  .candy {
+    position: absolute; z-index: 7; width: 18px; pointer-events: none;
+    animation: candypop var(--t) cubic-bezier(.2, .7, .4, 1) forwards;
+  }
+  @keyframes candypop {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(.4); opacity: 1; }
+    70%  { opacity: 1; }
+    100% { transform: translate(var(--dx), calc(var(--dy) + 120px)) rotate(var(--spin)) scale(1); opacity: 0; }
+  }
+  @media (max-width: 600px) { .bday h1 { top: 70px; } .cake { width: 24vw; } }
+
   /* ---------- controls ---------- */
   body.paused *, body.paused *::before, body.paused *::after { animation-play-state: paused !important; }
   .controls { position: fixed; top: 14px; right: 14px; z-index: 20; display: flex; gap: 8px; }
@@ -323,6 +396,20 @@
 </style>
 </head>
 <body>
+  <section class="scene bday" data-music="birthday.aac">
+    <div class="spooky-beams"></div>
+    <div class="moon"></div>
+    <div class="bunting"></div>
+    <h1>JELLE’S SPOOKY<br>BIRTHDAY PARTY</h1>
+    <div class="stage">
+      <img class="duo" src="jelle.png" alt="Two friends dancing in black tracksuits">
+    </div>
+    <div class="dim"></div>
+    <div class="boss"></div>
+    <div class="cake"></div>
+    <div class="fog"></div>
+  </section>
+
   <section class="scene halloween" data-music="halloween.aac">
     <div class="spooky-beams"></div>
     <div class="moon"></div>
@@ -372,10 +459,11 @@
   let paused = false;
 
   const PALETTES = {
+    bday: ["#9dff3c", "#b04bff", "#ff7a00", "#ffd23f", "#ff4ecd", "#1a1a1a"],
     disco: ["#ff00c8", "#00f0ff", "#ffe600", "#39ff14", "#ff6a00", "#ffffff"],
     halloween: ["#ff7a00", "#9a2bff", "#39ff14", "#ffb000", "#1a1a1a"],
   };
-  const sceneName = () => scenes[current].classList.contains("halloween") ? "halloween" : "disco";
+  const sceneName = () => ["bday", "halloween", "disco"].find(n => scenes[current].classList.contains(n));
   const here = el => { scenes[current].appendChild(el); return el; };
   const removeWhenDone = (el, name) => el.addEventListener("animationend", e => {
     if (!name || e.animationName === name) el.remove();
@@ -470,6 +558,94 @@
     p.style.setProperty("--t", (hype ? rand(4, 6) : rand(8, 13)) + "s");
     removeWhenDone(p, "rise");
   }
+  /* spooky birthday party */
+  const GHOST_SVG = `<svg viewBox="0 0 80 110" width="100%">
+    <path d="M40 2l14 30H26z" fill="var(--hat)"/><circle cx="40" cy="3" r="5" fill="#ffd23f"/>
+    <path d="M30 22l4 8M40 20v10M50 22l-4 8" stroke="#fff" stroke-width="3" opacity=".6"/>
+    <path d="M10 70C10 44 22 30 40 30s30 14 30 40v34l-8-7-8 8-7-8-7 8-8-8-8 7z" fill="#f4f1ff"/>
+    <ellipse cx="31" cy="58" rx="5" ry="7" fill="#1a1028"/><ellipse cx="49" cy="58" rx="5" ry="7" fill="#1a1028"/>
+    <ellipse cx="40" cy="76" rx="6" ry="8" fill="#1a1028"/>
+  </svg>`;
+  const CAKE_SVG = `<svg viewBox="0 0 200 190" width="100%">
+    <g class="flame"><path d="M52 18c-7 10-7 18 0 22 7-4 7-12 0-22z" fill="#ffb000"/><path d="M52 26c-3 5-3 9 0 11 3-2 3-6 0-11z" fill="#fff3b0"/></g>
+    <g class="flame" style="animation-delay:-.07s"><path d="M100 8c-7 10-7 18 0 22 7-4 7-12 0-22z" fill="#ffb000"/><path d="M100 16c-3 5-3 9 0 11 3-2 3-6 0-11z" fill="#fff3b0"/></g>
+    <g class="flame" style="animation-delay:-.12s"><path d="M148 18c-7 10-7 18 0 22 7-4 7-12 0-22z" fill="#ffb000"/><path d="M148 26c-3 5-3 9 0 11 3-2 3-6 0-11z" fill="#fff3b0"/></g>
+    <rect x="47" y="40" width="10" height="40" rx="2" fill="#b04bff"/><rect x="95" y="30" width="10" height="50" rx="2" fill="#9dff3c"/><rect x="143" y="40" width="10" height="40" rx="2" fill="#b04bff"/>
+    <rect x="18" y="78" width="164" height="100" rx="10" fill="#1d1426"/>
+    <path d="M18 92q0-14 14-14h136q14 0 14 14v10q-8 0-10 12-3 10-8-2-4-12-12 2-5 10-10-4-4-10-12 0-7 16-12 0-5-12-12 0-6 10-11-4-4-12-12 2-6 12-11-2-5-12-12 0-5 10-10-4-3-8-10 4-4 8-8-6z" fill="#ff7a00"/>
+    <path d="M18 140h164" stroke="#b04bff" stroke-width="6"/>
+    <circle cx="50" cy="160" r="6" fill="#9dff3c"/><circle cx="100" cy="160" r="6" fill="#9dff3c"/><circle cx="150" cy="160" r="6" fill="#9dff3c"/>
+    <ellipse cx="100" cy="181" rx="96" ry="8" fill="#000" opacity=".5"/>
+  </svg>`;
+  const CANDY_SVG = `<svg viewBox="0 0 20 24" width="100%"><path d="M10 0L20 24H0z" fill="#ffd23f"/><path d="M5 12L15 12 20 24H0z" fill="#ff7a00"/><path d="M2 19L18 19 20 24H0z" fill="#f8f4e8"/></svg>`;
+  const bdayBalloonColors = ["#ff7a00", "#b04bff", "#1d1426", "#9dff3c", "#ff4ecd"];
+
+  function bdayBalloon(x) {
+    const b = here(document.createElement("div"));
+    const c = pick(bdayBalloonColors);
+    b.className = "balloon";
+    b.style.left = (x ?? Math.random() * 92) + "vw";
+    b.style.setProperty("--c", c);
+    b.style.setProperty("--s", rand(.8, 1.4));
+    b.style.setProperty("--t", rand(8, 13) + "s");
+    if (c === "#ff7a00" || Math.random() < .25) {
+      b.innerHTML = `<svg class="eyes" viewBox="0 0 60 76"><path d="M17 30l6-9 6 9zM31 30l6-9 6 9z" fill="#1a1028"/><path d="M16 44q14 12 28 0l-4 1-3 4-4-4-4 5-4-5-4 4-3-4z" fill="#1a1028"/></svg>`;
+    }
+    removeWhenDone(b, "rise");
+  }
+  function ghost() {
+    const g = here(document.createElement("div"));
+    g.className = "ghost";
+    g.innerHTML = GHOST_SVG;
+    g.style.left = rand(0, 92) + "vw";
+    g.style.setProperty("--s", rand(.6, 1.2));
+    g.style.setProperty("--t", rand(9, 14) + "s");
+    g.style.setProperty("--hat", pick(["#ff7a00", "#b04bff", "#9dff3c", "#ff4ecd"]));
+    removeWhenDone(g, "rise");
+  }
+  function candyBurst(x, y) {
+    for (let i = 0; i < 22; i++) {
+      const c = here(document.createElement("div"));
+      const angle = rand(0, Math.PI * 2), dist = rand(80, 260);
+      c.className = "candy";
+      c.innerHTML = CANDY_SVG;
+      c.style.left = x - 9 + "px";
+      c.style.top = y - 11 + "px";
+      c.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+      c.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+      c.style.setProperty("--spin", rand(-540, 540) + "deg");
+      c.style.setProperty("--t", rand(1, 1.6) + "s");
+      removeWhenDone(c, "candypop");
+    }
+  }
+  (function decorateBday() {
+    const bunting = document.querySelector(".bunting");
+    const colors = ["#ff7a00", "#b04bff", "#1d1426", "#9dff3c"];
+    const count = Math.max(10, Math.round(innerWidth / 70));
+    for (let i = 0; i < count; i++) {
+      const f = document.createElement("span");
+      const sag = Math.sin(Math.PI * i / (count - 1));
+      f.style.setProperty("--c", colors[i % colors.length]);
+      f.style.setProperty("--y", sag * 26 + "px");
+      f.style.setProperty("--d", -i * .23 + "s");
+      bunting.appendChild(f);
+    }
+    document.querySelector(".cake").innerHTML = CAKE_SVG;
+    document.querySelector(".boss").innerHTML = GHOST_SVG.replace("var(--hat)", "#ff7a00");
+    const title = document.querySelector(".bday h1");
+    [...title.childNodes].forEach(node => {
+      if (node.nodeType !== 3) return;
+      const frag = document.createDocumentFragment();
+      for (const ch of node.textContent) {
+        const span = document.createElement("span");
+        span.className = "ch";
+        span.textContent = ch === " " ? "\u00a0" : ch;
+        frag.appendChild(span);
+      }
+      node.replaceWith(frag);
+    });
+  })();
+
   function hangSpiders() {
     const scene = document.querySelector(".halloween");
     [[12, "18vh", "34vh", 50], [78, "40vh", "58vh", 38]].forEach(([left, from, to, size], i) => {
@@ -488,12 +664,16 @@
 
   /* switching slides */
   scenes.forEach(() => dots.appendChild(document.createElement("span")));
+  let firstShow = true;
   function show(i) {
     current = (i + scenes.length) % scenes.length;
     scenes.forEach((s, k) => {
+      if (firstShow) s.style.transition = "none";
       s.style.transform = `translateX(${(k - current) * 100}%)`;
       s.setAttribute("aria-hidden", k !== current);
+      if (firstShow) { s.offsetWidth; s.style.transition = ""; }
     });
+    firstShow = false;
     [...dots.children].forEach((d, k) => d.classList.toggle("on", k === current));
     playSceneMusic();
   }
@@ -548,7 +728,7 @@
     bassBox.style.transform = `translateY(${-k * 28}px) scale(${(1 + k * 0.03) * zoom}, ${(1 - k * 0.035) * zoom})`;
     halloweenScene.classList.toggle("shout", onTrack && SHOUTS.some(([from, to]) => t >= from && t < to));
     if (clock) {
-      const song = t + (music.src.endsWith("halloween.aac") ? SONG_OFFSET : 0);
+      const song = t + (music.src.endsWith("halloween.aac") ? SONG_OFFSET : music.src.endsWith("birthday.aac") ? 2.05 : 0);
       clock.textContent = `${Math.floor(song / 60)}:${(song % 60).toFixed(1).padStart(4, "0")}`;
     }
   }
@@ -593,6 +773,153 @@
   }
   requestAnimationFrame(followDisco);
 
+  /* birthday: the mashup sits on a steady 147 bpm grid; bars of 4 beats start at BDAY_BAR0 */
+  const BDAY_BEAT = 0.40815;
+  const BDAY_BAR0 = 1.583;
+  const BDAY_CALM = [[0, 22], [87, 94], [107, 110]];
+  const BDAY_BREAKS = [22, 38, 54, 62, 70, 78, 98, 118, 126, 134];
+  const barTime = b => BDAY_BAR0 + b * 4 * BDAY_BEAT;
+  const BDAY_SLAMS = [23, 39, 55, 63, 71, 79, 95, 99, 111, 119, 127].map(barTime);
+  const BDAY_FLIPS = [7, 9, 11, 13].map(barTime).concat(BDAY_SLAMS);
+  const BDAY_BREAK_TIMES = BDAY_BREAKS.map(barTime);
+  const BREAKDOWN = [barTime(87), barTime(95)];
+  let bdayPrevT = 0;
+  const crossed = (times, a, b) => times.some(x => a < x && x <= b && b - a < 0.5);
+  /* bass level of birthday.aac every 0.05 s; bars 55-70 ride up and down on it, bars 71-85 push forward on it */
+  const BDAY_BASS = "ca996a9c896546757333223252121212421121114211101042101100330010102642113355452332342101000410000004210001032001010230000001400000117531124566643333431010003200000033000000240000011410010004100101055411155876633444511000013000000069211200010000000048822299882101goll9dkd888868856869gaa49gc855553c44246537552444376437364665433544b653466a94547c427999e988edd54652fb86a443ga88i344ha86e444bd77c85348a62348a633257535966f575eac4225335443473255346334732397afh53286328a53237c774269825647fba49df633533764224325532233253211232643222326nndgafcbee77ac78ac8a897dc86544557773345856535a636a76d7729af6342249a62334a84316c425a65b657c89423224887654aa75667a66ba7aac7af999a555bdcaba8da897ad78cf8bgaa8af7775666a86953957676dkg97e979656aac435546c997449886667976985e9967d9656552111110212321100100111100000000002zyzzuxzzxzzzzxzzrzzzyxzznzzzzwzzmzzzzuzzpzwzyuxzuzwzxsvzvwwzxtuyxqxzxtsyxmyyytqxxjzxyuqvxmzuzuqvxqztyuqtxtwuzvrsxvrvxwrqwwlwwwhwtulzvwrpvwkztxuquwpysxuqtvtvuyursvvpvxvrqwvmxwwspvvkxlxjyswmywwrouvpyrxtqsvrwsxuqqvusvxuqqvvnwxvrpvvjyvwtouvjzvxtpuvoyswtpsvrxtyttvxtqvwtorvvmwwvsovujyuwrotvjyuwspuvnzrxtptvrvsxuqrvtsuxupqvuowyvrpvvixuvspuvjytwspuvnztwtpsvqzrxttuwsruwtovxtlwgussuvjxvuiyiylujxntkxowsvqmtupwrxtqrvtttxuqruuovxvqpvvjwvvrpuviytwspuvmznzorqtrwuxsotvtusxuqrvuqvwvrpvvlxwwrpuvizvwspuvlyswtptvp4101210122015369e3114300mzyyusxxjzuxurwxmzsyuqvwqzsxuqtwtztxvqsvuwuxvrqvvkvvwtpuvjzuwspvvkzrwtquvozqwtqsvszqwuqrvuzuwupqvupzuvrpuujzuwspuukzswrotumzqxrporqqpwsosvuvqwvrrvumxwvrpuukztvqpuukzrvsotvnzqxtpsuqywwtqrutxvwuqqvumowvsqvulzsvrpuukzswsptumzqwtptvqzrwuqrvstpwurruunzuusotugvvvjrqtkvtuqouumzovtpsvqzqwtpruszvvtpquttxvuppuumyuvqouuhwrvtotulzqwqjlnkzqwrosvszswuqqutrvvuqpuuoytvqpuujzsvsntulzswsosupztvsqrtqvrxtioppmowtoqvuluuvspuuhztvsotulzqvrptuozqvsoruryqwupqutpzvurputmzuviqenfouvrovvlzqvsotvozpwtpsurzswtmvwsmoutoqvu822042005301531043334zqyqzxyupvwtuwyvrtvupvywsrwvmzxwsqvvjzwwtquvkxvxuquvnwvxuqtvrwwxuprutryxvrquuoxwwsquujtvwtpvvjuvwtpuvnyuwuptuquvxvqsusrwwvqqutqzwwfrdsjzwvqpuujvvwtptumuuxuqtvquvxuqsvtqvwvrruuqywwrquujzwvspuuiyvwsotulyuwtqtupwvxvqsusvxxvrrvuqywvrpvvkxvwrpuvf3010000000000003fi7abi68zzzxttxwrzyysrwwozxxsqwwjvwwtpvvlyvxuquvpwvxvqtustwxvhmnonzxvesqrjzxvqpvvkvwwtpuukuvxuqtvpuuxupsvssuxuqrutqywvrruumzwwspuujvvwmqbskzvwsouvosuwtpturuwwvrsvtrxwvqquukxwvrpuujyvwspuukxvwpolmlywwrnorqtwwtosvtotwvqquuluwvrqvuizwvizkylyuvqovvn2010000000000001mukuiugtnyywrrxxlyxxtpwwjzuytpvwmzuxuquwqzryuqtwuutxvqrwvqwwwrpvvkyvwjzvvjzvwrovwmztxtpuwqytytqsvswvwvrrvtquwvrqvvkxuwsqvviytxoswfizswqtvhlyrxupsvtvsxvqsvusvxurqvulwvwrpuuizuwspuvlzsxtpuvpysxtpsvrwsxuqvxtovwtoqwvlwvwrpvvjyuvspuulzrxsptupyvsokfa6zxtplgb6xyvrsyurpznwmwlwkxvwrpvvkytwsptvoytwuqsvswrxtprvuuwxvqpvumxxwrovvjywvspuukztwmytwnwwwrouvrwrwtprvtsrvuqpvuouwurpvvixuwspuvjyuwtouvnzrwrtuimxrwussmnsvxuqqvupwxvrqvuiyvvrpuukztxsouulyuwtptvqwtxupsvsvuwvqqvtpxwukwwugzxupovvjxtvrouvmwqvsqsuqyqytpstssswuqrvuquwvqpuvjxvvmsvgiyuvlymynwxjkmquo2000024200000364100006e337442394577889975000017852100058510000696100006b8310004ba510003j7395541f5688a89898545634751100038730000498300003aa500002bc711000if277551895100006b8200005c9411002e8395432a8410001dc2875517a6210005f35a6724f35a7632g5495541i9397641a84zxzzxzzzzzzzzzzzrzzzzxzzmzzzyuzzmzyzxtzzqzvzxtxzuzuzxtvzwvvzxttywpxyytsxxkyxyurxxjzvyurwxnztyuquwryxtplgb6zzvrmhc7uzwrnid8nzytoje8izwztqwxoztyuquwrztyvrtwtstxvrrvutvwvrrvviwvwsrwvkzuwspwvlztwtptvpzsxtpsvszsxuqrvuvuwvrqvuhwvvtouulwuvrpuvkyswsquwpzrwtpswsvswtrrutuuwuqpuupwvvrpuuoyuwsouujxswtosuowrwsqsurvrwusswuutwuqqwunwvusquulyuvrouumzswsotuozswtpsuquswuqrututwuqquulvvurqvukxuvrpvujzuvtptumyvsojea5xtqmiea6wvrojfb6rwsplgc7kytqmhc8czurnid97zvsnjea6zwsojfa6ywtpkgb6sxuqlhc7lzurmid8dzvrnid97zwsnje95zvsokfa6xxtpkgb7sxtplgc8kzzzvtwylzxzurxxnzuzvrvxrztzvruxuwtzwstwvpwywrqvvkwwwsqvvjzuxtpvwlztyuquwpztyuqtvswsxvqrvuruxvrqvvmwwwsqvviyuxsouvkyswtptvozsxuqsvswtxursvutvxvqqvumwwvrpuvjyuwspuvkztwtptvnysxtpsurwsxuqrvtsuwvqqvunwwvrquvjzvwrpuvjztwsptvnzswtpsvrwvsokfa6vxtqlhc7qyvrmhd8gxvsnid99zvyuqvwoztyuqtwrysxuqsvuutxvrrvvovwwsqvvixvwrouuiytwspuvmzsxtptvqxsxuqsvtvtxvqqvuovwvrpvvkxvwrpuviytwspuulxsxtptupxrxtpsvsvswuqruupvwvrquvlxwwrpuuiytwsptvlzswtptvpzrxtqsvsttxupqutpuwvqpuulwvvrpuuiyuwspuvlztxsptvpysxtpsvswswuqrvurtwurqvu91000000000553019lqvzzxzpztzvruwtyuyvqswusuxwrqvvmxwwsqvvjzvxtquvkzuxtpuvozsxuqtvsxsxuqrvutuxvrrvvnxxwrpvvjyvwspuvkztwspuvnzsxuqtvrytxuqrvtttxvqqvuowwvrpvvjyvwspuvjzuxsptvnzsxtptvqysxuqrvtutxvrruupwxwqpvukyvwrpuujztwspuvmzsxtqtvqzsxupsvtutwuqqvupvwvkxjxiywvqpvvg10000000000000000000000000000000000000000000";
+  const BDAY_BASS_UP = [55, 70], BDAY_BASS_FORWARD = [71, 85];
+  let bdayBass = 0;
+  /* lyric moves, snapped to beats: "face down" then "ass up", at clock 2:15 and again 4 bars later at 2:21.6 */
+  const LYRIC_MOVES = [[133.01, 134.23, 135.05, 137.09], [139.54, 140.76, 141.58, 143.62]];
+  const envelope = (t, [a, b], fadeIn = 0.15, fadeOut = 0.2) =>
+    t < a || t > b + fadeOut ? 0 : t < a + fadeIn ? (t - a) / fadeIn : t > b ? 1 - (t - b) / fadeOut : 1;
+  const bdayScene = document.querySelector(".bday");
+  const duo = bdayScene.querySelector(".duo");
+  const cakeEl = document.querySelector(".cake");
+  const dimEl = document.querySelector(".dim");
+  const bossEl = document.querySelector(".boss");
+  const titleChars = () => document.querySelectorAll(".bday h1 .ch");
+  let flareUntil = 0;
+
+  function ghostBurst() {
+    for (let i = 0; i < 12; i++) {
+      const g = here(document.createElement("div"));
+      const angle = (i / 12) * Math.PI * 2 + rand(-.2, .2), dist = rand(380, 620);
+      g.className = "burstghost";
+      g.innerHTML = GHOST_SVG;
+      g.style.setProperty("--hat", pick(["#ff7a00", "#b04bff", "#9dff3c", "#ff4ecd"]));
+      g.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+      g.style.setProperty("--dy", Math.sin(angle) * dist * .7 + "px");
+      g.style.setProperty("--spin", rand(-40, 40) + "deg");
+      removeWhenDone(g, "ghostout");
+    }
+  }
+  function puffSmoke() {
+    [26, 50, 74].forEach(x => {
+      const p = document.createElement("div");
+      p.className = "smoke";
+      p.style.left = `calc(${x}% - 7px)`;
+      p.style.top = x === 50 ? "2%" : "8%";
+      p.style.setProperty("--dx", rand(-20, 20) + "px");
+      cakeEl.appendChild(p);
+      removeWhenDone(p, "smoke");
+    });
+  }
+  function popBalloons() {
+    const scene = document.querySelector(".bday");
+    const visible = [...scene.querySelectorAll(".balloon")].filter(b => {
+      const r = b.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight;
+    }).slice(0, 3);
+    visible.forEach(b => {
+      const r = b.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+      b.remove();
+      for (let i = 0; i < 24; i++) {
+        const c = here(document.createElement("div"));
+        const angle = rand(0, Math.PI * 2), dist = rand(40, 160);
+        c.className = "pop";
+        c.style.left = x + "px"; c.style.top = y + "px";
+        c.style.background = pick(PALETTES.bday);
+        c.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+        c.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+        removeWhenDone(c, "burst");
+      }
+    });
+  }
+
+  function followBday() {
+    requestAnimationFrame(followBday);
+    if (paused) return;
+    const on = music.src.endsWith("birthday.aac") && !music.paused;
+    bdayScene.classList.toggle("synced", on);
+    if (!on) {
+      duo.style.transform = "";
+      titleChars().forEach(c => c.style.transform = "");
+      dimEl.style.opacity = 0; bossEl.style.opacity = 0; cakeEl.classList.remove("out");
+      return;
+    }
+    const t = music.currentTime;
+    const beats = (t - BDAY_BAR0) / BDAY_BEAT;
+    const k = Math.floor(beats), f = beats - k;
+    const bar = Math.floor(beats / 4);
+    const calm = BDAY_CALM.some(([a, b]) => bar >= a && bar <= b);
+    const hold = BDAY_BREAKS.includes(bar);
+    let hopF = f, height = 30, tilt = 7, side = k % 2 ? 1 : -1;
+    if (calm) { hopF = (((k % 2) + 2) % 2 + f) / 2; height = 18; tilt = 5; side = Math.floor(k / 2) % 2 ? 1 : -1; }
+    if (hold) { height = 4; tilt = 2; }
+    const lift = Math.sin(Math.PI * hopF);
+    const squash = Math.max(0, 1 - hopF / 0.15) * (hold ? 0 : 0.05);
+    const rot = side * tilt * Math.sin(Math.PI * f);
+    const want = parseInt(BDAY_BASS[Math.floor(t / 0.05)] || "0", 36) / 35;
+    bdayBass = want > bdayBass ? want : bdayBass * 0.88;
+    const up = bar >= BDAY_BASS_UP[0] && bar <= BDAY_BASS_UP[1] ? bdayBass * 34 : 0;
+    const forward = bar >= BDAY_BASS_FORWARD[0] && bar <= BDAY_BASS_FORWARD[1] ? 1 + bdayBass * 0.12 : 1;
+    // mirror on every slam after a break, with a quick turn
+    const done = BDAY_FLIPS.filter(ft => t >= ft);
+    const facing = done.length % 2 ? -1 : 1;
+    const since = done.length ? t - done[done.length - 1] : 99;
+    const sx = since < 0.3 ? -facing * Math.cos(Math.PI * since / 0.3) : facing;
+    const down = Math.max(...LYRIC_MOVES.map(([a, b]) => envelope(t, [a, b])));
+    const ass = Math.max(...LYRIC_MOVES.map(([, , a, b]) => envelope(t, [a, b], 0.1, 0.25)));
+    const popAt = LYRIC_MOVES.map(m => m[2]).find(a => t >= a && t < a + 0.6);
+    const pop = popAt !== undefined ? Math.sin(Math.PI * (t - popAt) / 0.6) * 70 : 0;
+    const twerk = ass ? Math.abs(Math.sin(Math.PI * 2 * f)) * 16 * ass : 0;
+    const bow = facing * (24 * down + 16 * ass);
+    const dip = 30 * down - pop - twerk;
+    const squat = 1 - 0.1 * down;
+    duo.style.transform = `translateY(${-lift * height * (1 - down) - up + dip}px) rotate(${rot * (1 - down) + bow}deg) scale(${sx * (1 + squash * 0.6) * forward}, ${(1 - squash) * forward * squat})`;
+
+    // title letters hop one after the other on each beat
+    const waveH = hold ? 3 : calm ? 7 : 13;
+    titleChars().forEach((c, i) => {
+      const lf = (((beats - i * 0.06) % 1) + 1) % 1;
+      c.style.transform = lf < 0.5 ? `translateY(${-Math.sin(Math.PI * lf * 2) * waveH}px)` : "";
+    });
+
+    // ghosts burst out and candles flare on every slam; balloons pop on every break
+    if (crossed(BDAY_SLAMS, bdayPrevT, t)) { ghostBurst(); flareUntil = t + 0.45; }
+    if (crossed(BDAY_BREAK_TIMES, bdayPrevT, t)) popBalloons();
+    if (crossed([BREAKDOWN[0]], bdayPrevT, t)) puffSmoke();
+    const inBreakdown = t >= BREAKDOWN[0] && t < BREAKDOWN[1];
+    cakeEl.classList.toggle("out", inBreakdown);
+    cakeEl.style.setProperty("--flare", t < flareUntil ? 1.9 : 1);
+
+    // breakdown: lights dim and a giant ghost rises behind them, gone on the slam
+    let boss = 0, bossRise = 0;
+    if (inBreakdown) {
+      const p = (t - BREAKDOWN[0]) / (BREAKDOWN[1] - BREAKDOWN[0]);
+      boss = Math.min(1, p / 0.25);
+      bossRise = Math.min(1, p / 0.35);
+    }
+    const afterSlam = t - BREAKDOWN[1];
+    const vanish = afterSlam >= 0 && afterSlam < 0.35 ? 1 - afterSlam / 0.35 : 0;
+    dimEl.style.opacity = Math.max(boss, vanish) * 0.5;
+    bossEl.style.opacity = Math.max(boss * 0.85, vanish * 0.85);
+    const bob = Math.sin(t * 2.2) * 3;
+    bossEl.style.transform = `translate(-50%, ${(1 - bossRise) * 60 - bob}%) scale(${1 + vanish * 0.6 * (afterSlam >= 0 ? 1 : 0)})`;
+    bdayPrevT = t;
+  }
+  requestAnimationFrame(followBday);
+
   function startMusic() {
     if (started) return;
     started = true;
@@ -636,6 +963,7 @@
     if (paused || e.target.closest("a")) return;
     startMusic();
     if (sceneName() === "halloween") return spiderBurst(e.clientX, e.clientY);
+    if (sceneName() === "bday") candyBurst(e.clientX, e.clientY);
     const palette = PALETTES[sceneName()];
     for (let i = 0; i < 30; i++) {
       const p = here(document.createElement("div"));
@@ -649,7 +977,7 @@
       p.style.setProperty("--dy", Math.sin(angle) * dist + "px");
       removeWhenDone(p, "burst");
     }
-    for (let i = 0; i < 3; i++) balloon(e.clientX / innerWidth * 100 - 4 + (i - 1) * 4);
+    if (sceneName() === "disco") for (let i = 0; i < 3; i++) balloon(e.clientX / innerWidth * 100 - 4 + (i - 1) * 4);
   });
 
   /* party loop */
@@ -657,6 +985,9 @@
   setInterval(() => { if (!paused && sceneName() === "disco") balloon(); }, 900);
   setInterval(() => { if (!paused && sceneName() === "halloween" && (hype || Math.random() < .33)) bat(); }, 430);
   setInterval(() => { if (!paused && sceneName() === "halloween" && (hype || Math.random() < .4)) pumpkin(); }, 680);
+
+  setInterval(() => { if (!paused && sceneName() === "bday") bdayBalloon(); }, 1100);
+  setInterval(() => { if (!paused && sceneName() === "bday") ghost(); }, 1600);
 
   show(0);
   startMusic();
