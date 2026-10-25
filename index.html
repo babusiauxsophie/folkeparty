@@ -688,23 +688,35 @@
     if (gainNode) { gainNode.gain.value = g; music.volume = 1; }
     else music.volume = Math.min(1, g / Math.max(...Object.values(LEVELS)));
   }
-  /* boosting above full volume needs Web Audio, which browsers only allow on a real site and after a tap or key press */
-  function hookAudio() {
-    if (audioCtx || location.protocol === "file:") return;
+  /* boosting above full volume needs Web Audio, which browsers only allow on a real site and after a tap or key press.
+     The music is only routed through it once it is really running, otherwise phones would stay silent. */
+  let hooking = false;
+  async function hookAudio() {
+    if (audioCtx || hooking || location.protocol === "file:") return;
+    hooking = true;
     try {
-      audioCtx = new AudioContext();
-      const src = audioCtx.createMediaElementSource(music);
-      gainNode = audioCtx.createGain();
-      const limiter = audioCtx.createDynamicsCompressor();
+      if (navigator.audioSession) navigator.audioSession.type = "playback";
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new Ctx();
+      await ctx.resume();
+      if (ctx.state !== "running") { ctx.close(); return; }
+      const src = ctx.createMediaElementSource(music);
+      gainNode = ctx.createGain();
+      const limiter = ctx.createDynamicsCompressor();
       limiter.threshold.value = -3; limiter.knee.value = 0; limiter.ratio.value = 20;
       limiter.attack.value = 0.003; limiter.release.value = 0.1;
-      src.connect(gainNode).connect(limiter).connect(audioCtx.destination);
-      audioCtx.resume();
+      src.connect(gainNode);
+      gainNode.connect(limiter);
+      limiter.connect(ctx.destination);
+      audioCtx = ctx;
       applyLevel();
-    } catch (e) { audioCtx = null; gainNode = null; }
+    } catch (e) {
+      gainNode = null;
+    } finally {
+      hooking = false;
+    }
   }
-  document.addEventListener("pointerdown", hookAudio, true);
-  document.addEventListener("keydown", hookAudio, true);
+  ["click", "touchend", "keydown"].forEach(type => document.addEventListener(type, hookAudio, true));
 
   function playSceneMusic() {
     const want = scenes[current].dataset.music;
