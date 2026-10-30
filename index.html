@@ -61,6 +61,9 @@
     display: flex; align-items: flex-end; justify-content: center;
     pointer-events: none; z-index: 5;
   }
+  .disco .stage { gap: 2vw; }
+  .dancer.partner { max-width: 40vw; animation-direction: alternate-reverse, normal; }
+  .dancer.folke { max-width: 52vw; }
   .dancer {
     height: 82vh; max-width: 90vw; object-fit: contain;
     transform-origin: bottom center;
@@ -426,7 +429,8 @@
     <img class="backup left" src="folkefiguur.png" alt="">
     <img class="backup right" src="folkefiguur.png" alt="">
     <div class="stage">
-      <img class="dancer" src="folkefiguur.png" alt="Folkefiguur dancing">
+      <img class="dancer partner" src="naamloos.png" alt="A red-haired girl dancing">
+      <img class="dancer folke" src="folkefiguur.png" alt="Folkefiguur dancing">
     </div>
   </section>
 
@@ -741,7 +745,8 @@
   const DISCO_SECTIONS = [[0, 16.16, "lazy"], [16.16, 33.22, "beat"], [33.22, 34.35, "lazy"], [34.35, 99, "double"]];
   const DISCO_LAG = 0;
   const discoScene = document.querySelector(".disco");
-  const discoDancer = discoScene.querySelector(".dancer");
+  const discoDancer = discoScene.querySelector(".dancer.folke");
+  const discoPartner = discoScene.querySelector(".dancer.partner");
   const backupL = discoScene.querySelector(".backup.left");
   const backupR = discoScene.querySelector(".backup.right");
   function followDisco() {
@@ -750,7 +755,7 @@
     const on = music.src.endsWith("party.mp3") && !music.paused;
     discoScene.classList.toggle("synced", on);
     if (!on) {
-      [discoDancer, backupL, backupR].forEach(el => el.style.transform = "");
+      [discoDancer, discoPartner, backupL, backupR].forEach(el => el.style.transform = "");
       discoScene.classList.remove("hype");
       return;
     }
@@ -769,6 +774,7 @@
     const squash = Math.max(0, 1 - hopF / 0.15) * 0.06;
     const rot = side * tilt * Math.sin(Math.PI * f);
     discoDancer.style.transform = `translateY(${-lift * height}px) rotate(${rot}deg) scale(${1 + squash * 0.6}, ${1 - squash})`;
+    discoPartner.style.transform = `translateY(${-lift * height}px) rotate(${-rot}deg) scale(${1 + squash * 0.6}, ${1 - squash})`;
     backupL.style.transform = `translateY(${-lift * height * 0.6}px) rotate(${-rot}deg)`;
     backupR.style.transform = `scaleX(-1) translateY(${-lift * height * 0.6}px) rotate(${-rot}deg)`;
   }
@@ -990,7 +996,7 @@
   setInterval(() => { if (!paused && sceneName() === "bday") bdayBalloon(); }, 1100);
   setInterval(() => { if (!paused && sceneName() === "bday") ghost(); }, 1600);
 
-  show(0);
+  show((parseInt(new URLSearchParams(location.search).get("slide"), 10) || 1) - 1);
   startMusic();
 </script>
 </body>
