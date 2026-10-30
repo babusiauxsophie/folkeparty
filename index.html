@@ -61,8 +61,11 @@
     display: flex; align-items: flex-end; justify-content: center;
     pointer-events: none; z-index: 5;
   }
-  .disco .stage { gap: 2vw; }
-  .dancer.partner { max-width: 40vw; animation-direction: alternate-reverse, normal; }
+  .disco .stage { gap: 0; }
+  .dancer.partner { height: 70vh; max-width: 40vw; animation-direction: alternate-reverse, normal; }
+  .disco .dancer { object-position: center bottom; position: relative; }
+  .disco .dancer.partner { z-index: 2; }
+  .disco .dancer.folke { z-index: 1; }
   .dancer.folke { max-width: 52vw; }
   .dancer {
     height: 82vh; max-width: 90vw; object-fit: contain;
@@ -91,8 +94,12 @@
     filter: hue-rotate(160deg) saturate(2);
     pointer-events: none; z-index: 2;
   }
-  .backup.left  { left: 4vw; }
-  .backup.right { right: 4vw; filter: hue-rotate(260deg) saturate(2); transform: scaleX(-1); animation-name: dance-flip; }
+  .backup.left  { left: calc(3vw + 9vh); }
+  .backup.right { right: calc(3vw + 9vh); filter: hue-rotate(260deg) saturate(2); transform: scaleX(-1); animation-name: dance-flip; }
+  /* the small pairs in the corners: she stands in front of him, a head shorter, feet level with his */
+  .backup.mini { height: 34vh; bottom: 2vh; z-index: 3; animation-direction: alternate; }
+  .backup.mini-left { left: 3vw; }
+  .backup.mini-right { right: 3vw; filter: hue-rotate(260deg) saturate(2); transform: scaleX(-1); animation-name: dance-flip; }
   @keyframes dance-flip {
     0%   { transform: scaleX(-1) rotate(-7deg) translateY(0); }
     50%  { transform: scaleX(-1) rotate(0deg) translateY(-20px); }
@@ -428,6 +435,8 @@
     <h1>PARTY TIME</h1>
     <img class="backup left" src="folkefiguur.png" alt="">
     <img class="backup right" src="folkefiguur.png" alt="">
+    <img class="backup mini mini-left" src="naamloos.png" alt="">
+    <img class="backup mini mini-right" src="naamloos.png" alt="">
     <div class="stage">
       <img class="dancer partner" src="naamloos.png" alt="A red-haired girl dancing">
       <img class="dancer folke" src="folkefiguur.png" alt="Folkefiguur dancing">
@@ -747,21 +756,45 @@
   const discoScene = document.querySelector(".disco");
   const discoDancer = discoScene.querySelector(".dancer.folke");
   const discoPartner = discoScene.querySelector(".dancer.partner");
+  /* his picture has empty space under his feet (5.36% of its height) and on his left (22.66% of its width);
+     she stands on the same floor and steps into that empty space, a little past his hands, in front of him */
+  function alignFeet() {
+    const scale = el => el.naturalWidth ? Math.min(el.clientWidth / el.naturalWidth, el.clientHeight / el.naturalHeight) : 0;
+    const lift = scale(discoDancer) * discoDancer.naturalHeight * 0.0536 - scale(discoPartner) * discoPartner.naturalHeight * 0.0067;
+    discoPartner.style.marginBottom = Math.max(0, lift) + "px";
+    const hisShownW = scale(discoDancer) * discoDancer.naturalWidth;
+    const emptyLeft = (discoDancer.clientWidth - hisShownW) / 2 + hisShownW * 0.2266;
+    discoPartner.style.marginRight = -(emptyLeft + hisShownW * 0.08) + "px";
+    // his empty strip on the right (19.48% of his width) should not count when centring the pair
+    discoDancer.style.marginRight = -((discoDancer.clientWidth - hisShownW) / 2 + hisShownW * 0.1948) + "px";
+  }
+  [discoDancer, discoPartner].forEach(el => el.complete ? alignFeet() : el.addEventListener("load", alignFeet));
+  addEventListener("resize", alignFeet);
   const backupL = discoScene.querySelector(".backup.left");
   const backupR = discoScene.querySelector(".backup.right");
+  const miniL = discoScene.querySelector(".backup.mini-left");
+  const miniR = discoScene.querySelector(".backup.mini-right");
+  /* who stands in front swaps every two bars (every 4 s before the music starts) */
+  function setFront(herFront) {
+    discoPartner.style.zIndex = herFront ? 2 : 1;
+    discoDancer.style.zIndex = herFront ? 1 : 2;
+    [miniL, miniR].forEach(m => m.style.zIndex = herFront ? 3 : 1);
+  }
   function followDisco() {
     requestAnimationFrame(followDisco);
     if (paused) return;
     const on = music.src.endsWith("party.mp3") && !music.paused;
     discoScene.classList.toggle("synced", on);
     if (!on) {
-      [discoDancer, discoPartner, backupL, backupR].forEach(el => el.style.transform = "");
+      setFront(Math.floor(performance.now() / 4000) % 2 === 0);
+      [discoDancer, discoPartner, backupL, backupR, miniL, miniR].forEach(el => el.style.transform = "");
       discoScene.classList.remove("hype");
       return;
     }
     const t = music.currentTime + DISCO_LAG;
     let k = 0;
     while (k < DISCO_BEATS.length - 2 && DISCO_BEATS[k + 1] <= t) k++;
+    setFront(Math.floor(k / 8) % 2 === 0);
     const span = DISCO_BEATS[k + 1] - DISCO_BEATS[k];
     const f = Math.min(1, Math.max(0, (t - DISCO_BEATS[k]) / span));
     const mode = (DISCO_SECTIONS.find(([a, b]) => t >= a && t < b) || [0, 0, "beat"])[2];
@@ -777,6 +810,8 @@
     discoPartner.style.transform = `translateY(${-lift * height}px) rotate(${-rot}deg) scale(${1 + squash * 0.6}, ${1 - squash})`;
     backupL.style.transform = `translateY(${-lift * height * 0.6}px) rotate(${-rot}deg)`;
     backupR.style.transform = `scaleX(-1) translateY(${-lift * height * 0.6}px) rotate(${-rot}deg)`;
+    miniL.style.transform = `translateY(${-lift * height * 0.6}px) rotate(${rot}deg)`;
+    miniR.style.transform = `scaleX(-1) translateY(${-lift * height * 0.6}px) rotate(${rot}deg)`;
   }
   requestAnimationFrame(followDisco);
 
